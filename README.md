@@ -7,7 +7,7 @@
 **[⬇ 下载最新版 devin-zh-hans.vsix](https://github.com/klarkxy/devin-zh-hans/releases/latest/download/devin-zh-hans.vsix)**
 　·　[全部版本](https://github.com/klarkxy/devin-zh-hans/releases)　·　[更新日志](CHANGELOG.md)
 
-安装：
+### Windows
 
 ```powershell
 # 关闭 Devin
@@ -20,6 +20,29 @@ Get-Process Devin -ErrorAction SilentlyContinue | Stop-Process -Force
 Remove-Item Env:\ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
 Start-Process "$env:LOCALAPPDATA\Programs\Devin\Devin.exe"
 ```
+
+### macOS
+
+已在 macOS（Darwin 27.0.0）、Devin Desktop **3.11.228 / VS Code 1.126.0**
+上实际安装，并由用户重启后人工确认汉化生效。
+
+**安装前请先备份完整的 `Devin.app`，并确认当前用户可写应用目录。**
+第 2/3/4 层需要修改 `.app` 内的资源，**会使原有 macOS 代码签名校验失效**；
+`product.json.checksums` 自洽并不意味着 macOS 签名仍然有效。
+本插件不重签名，也不关闭或绕过系统安全检查。若系统阻止启动，请恢复原应用备份。
+
+保存工作并完全退出 Devin，下载 VSIX 后安装：
+
+```sh
+"/Applications/Devin.app/Contents/Resources/app/bin/devin-desktop" \
+  --install-extension ./devin-zh-hans.vsix
+open -a Devin
+```
+
+自定义安装位置请调整命令路径。扩展运行时优先使用当前 Devin 的
+`vscode.env.appRoot`，也会探测 `/Applications/Devin.app` 与
+`~/Applications/Devin.app`，不依赖 Windows 的 `Devin.exe`。
+如果外壳仍是英文，在命令面板执行 `Configure Display Language`，选择简体中文。
 
 > 首次安装后**重启一次** Devin 才会完全生效 —— 语言包与窗口脚本在启动早期被读取，
 > 而扩展激活在启动后期。此后每次启动都是中文。
@@ -78,6 +101,7 @@ VS Code 解析扩展 manifest 的顺序是「语言包 bundle → `package.nls.<
 
 `product.json.checksums` 保护 12 个文件，其中两个是注入脚本的窗口 HTML、一个是 webapp 入口。
 本插件每次写完都会重算这些条目的哈希，实测 **12 / 12 自洽 → 不会出现「Devin 安装似乎损坏」**。
+这仅指 Devin 自身的资源校验；macOS 代码签名是独立的校验机制，见上方安装说明。
 
 ## 自动化行为
 
@@ -115,21 +139,35 @@ VS Code 解析扩展 manifest 的顺序是「语言包 bundle → `package.nls.<
   纯由表达式拼出的日期与配额提示、`about:blank` webview 里的内嵌页面。
 - Monaco 编辑器内部渲染文本不翻译（canvas 双渲染，也不应翻译）。
 - 跨域 iframe（内嵌的 `app.devin.ai`）不在注入范围内。
-- macOS 未验证：本插件按 Windows 安装树（`%LOCALAPPDATA%\Programs\Devin`）编写。
+- macOS 已在上述版本人工验证；其他系统/Devin 版本仍需验证，且修改应用资源会影响代码签名。
 
 ## Devin 更新后
 
-自动更新会覆盖 `resources/app`，第 2/3/4 层随之失效（第 1 层在用户目录，通常保留）。
+自动更新会覆盖 `resources/app`（macOS 为 `Contents/Resources/app`），第 2/3/4 层随之失效（第 1 层在用户目录，通常保留）。
 扩展下次激活时会检测并**自动重新落地**；若没恢复，执行命令面板里的
 **`Devin 中文: 重新应用汉化`**。
 
 ## 回滚
 
+优先使用命令面板里的 **`Devin 中文: 卸载汉化并回滚`**：从
+`~/.devin/devin-zh-backups/files-v2/manifest.json` 按完整路径还原全部文件，
+删除本插件新建的文件，然后卸载插件，避免下次启动重新应用。
+同名的各扩展 `package.json` 分别保存，不再按文件名混用。
+
+**不要在 Devin 升级后把旧备份覆盖到新版本。** 旧版 `vsix-*` 备份缺少完整路径信息，
+无法安全自动合并还原；必要时重新安装 Devin。macOS 无法启动时，可恢复安装前的完整
+`.app` 备份，并卸载插件，避免再次修改。
+
+仅卸载扩展可以使用以下命令，但**不会还原已修改的应用资源**：
+
 ```powershell
 & "$env:LOCALAPPDATA\Programs\Devin\bin\devin-desktop.cmd" --uninstall-extension devin-zh.devin-zh-hans
 ```
 
-或使用命令面板里的 `Devin 中文: 卸载汉化并回滚`（会从 `~/.devin/devin-zh-backups/vsix-*` 还原）。
+```sh
+"/Applications/Devin.app/Contents/Resources/app/bin/devin-desktop" \
+  --uninstall-extension devin-zh.devin-zh-hans
+```
 
 ## 开发者
 
@@ -140,6 +178,7 @@ python tools/build_manifest_plan.py   # 内置扩展贡献点计划 -> assets/ex
 python tools/build_patch.py           # 词表 -> translations/ / assets/
 python tools/build_dom.py             # DOM 运行时 -> dist/devin-zh-dom.js
 node tools/verify_layers.js --apply   # 沙盒副本上跑一遍真实落地逻辑并断言
+node --test tools/test_installation.js # 无需安装 Devin 的路径/幂等/回滚回归测试
 python tools/verify_integrity.py      # 完整性/占位符/注入状态报告
 ```
 
