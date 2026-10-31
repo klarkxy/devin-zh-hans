@@ -52,6 +52,20 @@ function devinHome() {
 }
 
 function findDevinInstall() {
+  if (process.platform === 'darwin') {
+    const app = vscode.env && vscode.env.appRoot;
+    const cands = [
+      process.env.DEVIN_INSTALL,
+      app && path.resolve(app, '..', '..'),
+      '/Applications/Devin.app/Contents',
+      path.join(os.homedir(), 'Applications', 'Devin.app', 'Contents'),
+    ];
+    for (const c of cands) {
+      if (!c) continue;
+      const inst = c.endsWith('.app') ? path.join(c, 'Contents') : c;
+      if (fs.existsSync(path.join(inst, 'Resources', 'app', 'product.json'))) return inst;
+    }
+  }
   const cands = [
     process.env.DEVIN_INSTALL,
     path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Devin'),
@@ -61,6 +75,11 @@ function findDevinInstall() {
     if (c && fs.existsSync(path.join(c, 'Devin.exe'))) return c;
   }
   return null;
+}
+
+function devinApp(inst) {
+  const mac = path.join(inst, 'Resources', 'app');
+  return fs.existsSync(mac) ? mac : path.join(inst, 'resources', 'app');
 }
 
 function findLangpack() {
@@ -93,14 +112,18 @@ function sameJson(a, b) {
   } catch { return false; }
 }
 
-function backup(p, tag) {
-  try {
-    if (!fs.existsSync(p)) return;
-    const d = path.join(BACKUP_ROOT, 'vsix-' + tag);
-    fs.mkdirSync(d, { recursive: true });
-    const dst = path.join(d, path.basename(p));
-    if (!fs.existsSync(dst)) fs.copyFileSync(p, dst);
-  } catch (e) { log('备份失败(忽略):', e.message); }
+function backup(p) {
+  // Full paths distinguish the five built-in package.json files.
+  const d = path.join(BACKUP_ROOT, 'files-v2');
+  fs.mkdirSync(d, { recursive: true });
+  const index = path.join(d, 'manifest.json');
+  const entries = fs.existsSync(index) ? JSON.parse(fs.readFileSync(index, 'utf8')) : {};
+  if (Object.prototype.hasOwnProperty.call(entries, p)) return;
+  const dst = path.join(d, crypto.createHash('sha256').update(p).digest('hex'));
+  const exists = fs.existsSync(p);
+  if (exists) fs.copyFileSync(p, dst);
+  entries[p] = exists ? dst : null;
+  writeJson(index, entries);
 }
 
 function readJson(p) {
@@ -123,7 +146,7 @@ function applyLanguagePack(ctx) {
   let changed = false;
 
   if (!sameFile(src, dst)) {
-    backup(dst, 'langpack');
+    backup(dst);
     fs.copyFileSync(src, dst);
     log('已写入合并版 main.i18n.json');
     changed = true;
@@ -133,7 +156,7 @@ function applyLanguagePack(ctx) {
   const wsSrc = path.join(ctx.extensionPath, 'translations', 'extensions', 'windsurf.i18n.json');
   const wsDst = path.join(lp, 'translations', 'extensions', 'windsurf.i18n.json');
   if (fs.existsSync(wsSrc) && !sameFile(wsSrc, wsDst)) {
-    backup(wsDst, 'langpack');
+    backup(wsDst);
     fs.mkdirSync(path.dirname(wsDst), { recursive: true });
     fs.copyFileSync(wsSrc, wsDst);
     log('已写入 windsurf.i18n.json');
@@ -148,7 +171,7 @@ function applyLanguagePack(ctx) {
     if (Array.isArray(locs) && locs[0]) {
       locs[0].translations = locs[0].translations || [];
       if (!locs[0].translations.some((t) => t.id === 'windsurf')) {
-        backup(pkgPath, 'langpack');
+        backup(pkgPath);
         locs[0].translations.push({
           id: 'windsurf',
           path: './translations/extensions/windsurf.i18n.json',
@@ -198,7 +221,7 @@ function applyExtensionManifests(ctx) {
   const zhMap = readJson(zhPath);
   if (!plan || !enMap) { log('缺少 ext-manifest 产物，跳过扩展贡献点层'); return { ext: false, changed: false }; }
 
-  const extRoot = path.join(inst, 'resources', 'app', 'extensions');
+  const extRoot = path.join(devinApp(inst), 'extensions');
   let changed = false;
 
   for (const name of EXT_FAMILY) {
@@ -224,12 +247,12 @@ function applyExtensionManifests(ctx) {
     const pEn = path.join(dir, 'package.nls.json');
     const pZh = path.join(dir, 'package.nls.zh-cn.json');
     if (!sameJson(readJson(pEn), nlsEn)) {
-      backup(pEn, 'ext');
+      backup(pEn);
       writeJson(pEn, nlsEn);
       changed = true;
     }
     if (!sameJson(readJson(pZh), nlsZh)) {
-      backup(pZh, 'ext');
+      backup(pZh);
       writeJson(pZh, nlsZh);
       changed = true;
     }
@@ -243,7 +266,7 @@ function applyExtensionManifests(ctx) {
       if (setByPath(pkg, e.path, '%' + e.key + '%')) dirty = true;
     }
     if (dirty) {
-      backup(pkgPath, 'ext');
+      backup(pkgPath);
       writeJson(pkgPath, pkg);
       log('已本地化扩展贡献点: ' + name + ' (' + entries.length + ' 个字段)');
       changed = true;
@@ -352,7 +375,7 @@ function writeValidWebappChunk(chunk, source) {
 function applyWebappI18n(ctx) {
   const inst = findDevinInstall();
   if (!inst) return { webapp: false, changed: false };
-  const app = path.join(inst, 'resources', 'app');
+  const app = devinApp(inst);
 
   const zh = readJson(path.join(ctx.extensionPath, 'assets', 'webapp-i18n.json'));
   if (!zh) { log('缺少 webapp-i18n.json，跳过 webapp 层'); return { webapp: false, changed: false }; }
@@ -373,7 +396,7 @@ function applyWebappI18n(ctx) {
   if (a0 >= 0 && b0 > a0) {
     const old = s.slice(a0, b0 + HOST_END.length);
     if (old === payload && !webappSyntaxError(s)) return { webapp: true, changed: false };
-    backup(chunk, 'webapp');
+    backup(chunk);
     // 旧式载荷形如 `/*devin-zh*/Mt.isInitialized||Eu(),Mt.addResourceBundle(…)`，
     // 锚点被吞进了载荷里 —— 先整体摘掉，再补回锚点，最后把新载荷插到锚点之前。
     let next = s.slice(0, a0) + s.slice(b0 + HOST_END.length);
@@ -403,7 +426,7 @@ function applyWebappI18n(ctx) {
 
   const at = s.indexOf(HOST_ANCHOR);
   if (at < 0) return { webapp: false, changed: false };
-  backup(chunk, 'webapp');
+  backup(chunk);
   // 必须插在锚点**之前**：Object.assign 先改 mu，Eu() 的 init 才会把中文一并注册。
   // 插在之后则 init 已用旧 mu 完成，改 mu 不再影响已注册的 resources。
   s = s.slice(0, at) + payload + ',' + s.slice(at);
@@ -418,7 +441,7 @@ function applyWebappI18n(ctx) {
 function applyDomLayer(ctx) {
   const inst = findDevinInstall();
   if (!inst) { log('未找到 Devin 安装目录，跳过 DOM 层'); return { dom: false, changed: false }; }
-  const app = path.join(inst, 'resources', 'app');
+  const app = devinApp(inst);
   const runtimeSrc = path.join(ctx.extensionPath, 'dist', 'devin-zh-dom.js');
   const productPath = path.join(app, 'product.json');
   const product = readJson(productPath);
@@ -432,6 +455,7 @@ function applyDomLayer(ctx) {
 
     if (!sameFile(runtimeSrc, jsDst)) {
       try {
+        backup(jsDst);
         fs.writeFileSync(jsDst, fs.readFileSync(runtimeSrc));
         log('已写入 ' + rel.replace(/\/[^/]+$/, '/') + jsName);
         changed = true;
@@ -444,7 +468,7 @@ function applyDomLayer(ctx) {
     if (!s.includes(tag)) {
       const a = '<script src="' + anchor + '" type="module"></script>';
       if (!s.includes(a)) { log('HTML 锚点缺失: ' + rel); continue; }
-      backup(html, 'dom');
+      backup(html);
       fs.writeFileSync(html, s.replace(a, tag + '\n\t' + a), 'utf8');
       log('已注入 script 标签: ' + rel);
       changed = true;
@@ -462,7 +486,7 @@ function applyDomLayer(ctx) {
     }
     if (dirty) {
       try {
-        backup(productPath, 'dom');
+        backup(productPath);
         writeJson(productPath, product);
         log('已同步 product.json.checksums');
         changed = true;
@@ -490,7 +514,7 @@ function collectStatus(ctx) {
   }
 
   if (inst) {
-    const app = path.join(inst, 'resources', 'app');
+    const app = devinApp(inst);
 
     // 扩展贡献点
     let extOk = 0, extTotal = 0;
@@ -580,42 +604,34 @@ function activate(context) {
         changed ? '已重新应用汉化，请重启 Devin。' : '汉化已是最新，无需改动。');
     }),
     vscode.commands.registerCommand('devin-zh.uninstall', async () => {
-      const dirs = fs.existsSync(BACKUP_ROOT)
-        ? fs.readdirSync(BACKUP_ROOT).filter((d) => d.startsWith('vsix-')).sort() : [];
-      if (!dirs.length) {
-        vscode.window.showWarningMessage('没有找到本插件产生的备份，无法自动回滚。');
+      const index = path.join(BACKUP_ROOT, 'files-v2', 'manifest.json');
+      if (!fs.existsSync(index)) {
+        vscode.window.showWarningMessage('没有找到包含完整路径的备份，无法安全自动回滚。旧版 vsix-* 备份请勿混用，必要时重新安装 Devin。');
         return;
       }
       const pick = await vscode.window.showWarningMessage(
-        '将回滚到本插件安装前的状态（最近的备份）。继续？', { modal: true }, '回滚', '取消');
+        '将从备份还原文件并卸载本插件。请勿在 Devin 已升级后还原旧版本备份。继续？', { modal: true }, '回滚', '取消');
       if (pick !== '回滚') return;
 
-      const src = path.join(BACKUP_ROOT, dirs[dirs.length - 1]);
-      const inst = findDevinInstall();
-      const lp = findLangpack();
-      const targets = [];
-      if (lp) {
-        targets.push([path.join(src, 'main.i18n.json'), path.join(lp, 'translations', 'main.i18n.json')]);
-        targets.push([path.join(src, 'windsurf.i18n.json'), path.join(lp, 'translations', 'extensions', 'windsurf.i18n.json')]);
-        targets.push([path.join(src, 'package.json'), path.join(lp, 'package.json')]);
-      }
-      if (inst) {
-        const app = path.join(inst, 'resources', 'app');
-        targets.push([path.join(src, 'workbench.html'), path.join(app, 'out/vs/code/electron-browser/workbench/workbench.html')]);
-        targets.push([path.join(src, 'sessions.html'), path.join(app, 'out/vs/sessions/electron-browser/sessions.html')]);
-        targets.push([path.join(src, 'product.json'), path.join(app, 'product.json')]);
-        for (const name of EXT_FAMILY) {
-          targets.push([path.join(src, 'package.json'), path.join(app, 'extensions', name, 'package.json')]);
+      const entries = JSON.parse(fs.readFileSync(index, 'utf8'));
+      for (const b of Object.values(entries)) {
+        if (b && !fs.existsSync(b)) {
+          await vscode.window.showWarningMessage('备份文件缺失，未执行回滚: ' + b);
+          return;
         }
-        const chunk = findHostChunk(app);
-        if (chunk) targets.push([path.join(src, path.basename(chunk)), chunk]);
       }
-      for (const [b, t] of targets) {
+      for (const [t, b] of Object.entries(entries)) {
         try {
-          if (fs.existsSync(b) && fs.existsSync(t)) { fs.copyFileSync(b, t); log('已还原 ' + t); }
-        } catch (e) { log('还原失败 ' + t + ': ' + e.message); }
+          if (b) fs.copyFileSync(b, t);
+          else if (fs.existsSync(t)) fs.unlinkSync(t);
+          log('已还原 ' + t);
+        } catch (e) {
+          await vscode.window.showWarningMessage('还原失败 ' + t + ': ' + e.message);
+          return;
+        }
       }
-      await vscode.window.showInformationMessage('已回滚，请重启 Devin。');
+      await vscode.commands.executeCommand('workbench.extensions.uninstallExtension', 'devin-zh.devin-zh-hans');
+      await vscode.window.showInformationMessage('已回滚并卸载扩展，请重启 Devin。');
     })
   );
 }
@@ -623,5 +639,3 @@ function activate(context) {
 function deactivate() { }
 
 module.exports = { activate, deactivate };
-
-

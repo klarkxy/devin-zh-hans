@@ -168,16 +168,26 @@ CSP 是 `script-src 'self'`，同目录外链脚本合法；Trusted Types 只约
 
 ## 备份与回滚
 
-所有写文件操作前都会备份到 `~/.devin/devin-zh-backups/vsix-<层>/`：
+所有写文件操作前会记录到 `~/.devin/devin-zh-backups/files-v2/manifest.json`：
+键为目标完整路径，值为原文件备份路径（以目标完整路径的 SHA-256 命名），
+或 `null`（原来不存在，由插件新建）。备份失败会中止对应修改，不再忽略失败继续写入。
 
-| 目录 | 来源 |
-|---|---|
-| `vsix-langpack` | 语言包与 bundle 清单 |
-| `vsix-ext` | 内置扩展的 package.json 与 nls 文件 |
-| `vsix-webapp` | webapp i18next chunk |
-| `vsix-dom` | 窗口 HTML 与 `product.json` |
+这样不同扩展的 `package.json`、`package.nls.json` 不会覆盖彼此的备份，
+新增 DOM 运行时也可在回滚时移除。回滚前检查所有原文件备份都存在，再逐个还原；
+成功后卸载扩展，避免下一次激活重新应用。
 
-命令面板的 `Devin 中文: 卸载汉化并回滚` 会从最近的 `vsix-*` 批次还原。
+旧版 `vsix-*` 备份没有完整路径，不能安全自动合并。不要把旧版本应用备份还原到升级后的
+Devin；必要时重新安装。macOS 的完整 `.app` 备份应在安装插件前由用户保存。
+
+## macOS 安装路径与代码签名
+
+扩展优先从 `vscode.env.appRoot` 推导当前 `.app/Contents`，再探测系统与用户
+`Applications` 目录；`DEVIN_INSTALL` 也可指定 `.app` 或 `Contents`。
+macOS 使用大小写敏感的 `Contents/Resources/app`，Windows 保留 `resources/app`。
+
+资源修改会使原有 macOS 代码签名失效；同步 `product.json.checksums` 不能修复该签名。
+插件不执行重签名或系统安全检查绕过。已在 Darwin 27.0.0、Devin 3.11.228 /
+VS Code 1.126.0 上由用户重启后人工验证生效，其他版本仍需验证。
 
 ## 验证方式
 

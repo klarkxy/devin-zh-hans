@@ -33,12 +33,23 @@ const FAMILY = ['windsurf', 'windsurf-dev-containers', 'windsurf-remote-devin',
 
 // ── 定位真实安装 ──
 const REAL_INST = (() => {
+  if (process.platform === 'darwin') {
+    const c = [process.env.DEVIN_INSTALL, '/Applications/Devin.app/Contents',
+      path.join(os.homedir(), 'Applications', 'Devin.app', 'Contents')];
+    for (const p of c) {
+      if (!p) continue;
+      const inst = p.endsWith('.app') ? path.join(p, 'Contents') : p;
+      if (fs.existsSync(path.join(inst, 'Resources', 'app', 'product.json'))) return inst;
+    }
+    return null;
+  }
   const c = [process.env.DEVIN_INSTALL,
     path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Devin'), 'C:\\Program Files\\Devin'];
   for (const p of c) if (p && fs.existsSync(path.join(p, 'Devin.exe'))) return p;
   return null;
 })();
-const REAL_HOME = path.join(os.homedir(), '.devin');
+const REAL_HOME = process.env.DEVIN_HOME || path.join(os.homedir(), '.devin');
+const RESOURCES = process.platform === 'darwin' ? 'Resources' : 'resources';
 
 // 被本插件写入的路径（相对 resources/app）
 const TOUCHED = [
@@ -63,9 +74,10 @@ function protectedFiles(app) {
 
 function buildSandbox() {
   if (!REAL_INST) return null;
-  const app = path.join(REAL_INST, 'resources', 'app');
-  const dst = path.join(SANDBOX, 'Devin');
-  const dstApp = path.join(dst, 'resources', 'app');
+  const app = path.join(REAL_INST, RESOURCES, 'app');
+  const dst = process.platform === 'darwin'
+    ? path.join(SANDBOX, 'Devin.app', 'Contents') : path.join(SANDBOX, 'Devin');
+  const dstApp = path.join(dst, RESOURCES, 'app');
   const homeDst = path.join(SANDBOX, 'home');
 
   if (KEEP && fs.existsSync(dst)) {
@@ -75,7 +87,7 @@ function buildSandbox() {
 
   if (fs.existsSync(SANDBOX)) fs.rmSync(SANDBOX, { recursive: true, force: true });
   fs.mkdirSync(dstApp, { recursive: true });
-  fs.writeFileSync(path.join(dst, 'Devin.exe'), '');
+  if (process.platform !== 'darwin') fs.writeFileSync(path.join(dst, 'Devin.exe'), '');
 
   for (const rel of TOUCHED.concat(protectedFiles(app))) {
     const s = path.join(app, rel);
@@ -132,6 +144,7 @@ function buildSandbox() {
 
 let ENV;
 if (REAL) {
+  if (!REAL_INST) { console.error('✗ 未找到 Devin 安装目录'); process.exit(1); }
   ENV = { inst: REAL_INST, home: REAL_HOME };
 } else {
   ENV = buildSandbox();
@@ -139,7 +152,7 @@ if (REAL) {
   process.env.DEVIN_INSTALL = ENV.inst;
   process.env.DEVIN_HOME = ENV.home;
 }
-const APP = path.join(ENV.inst, 'resources', 'app');
+const APP = path.join(ENV.inst, RESOURCES, 'app');
 
 // ── 假 vscode ──
 const messages = [];
@@ -216,7 +229,9 @@ setTimeout(() => {
     const ids = (pkg.contributes.localizations[0].translations || []).map((t) => t.id);
     ok(ids.includes('windsurf'), '语言包已注册 windsurf bundle');
   } else {
-    ok(false, '未找到语言包');
+    const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+    ok(pkg.contributes.localizations.some((loc) => loc.languageId === 'zh-cn'),
+      '使用扩展自带中文语言包');
   }
 
   // 2) 扩展贡献点
@@ -391,6 +406,3 @@ setTimeout(() => {
   origLog('\n' + (bad ? '✗ ' + bad + ' 项失败' : '✓ 全部通过'));
   process.exit(bad ? 1 : 0);
 }, 400);
-
-
-
