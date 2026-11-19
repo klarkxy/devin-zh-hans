@@ -1,0 +1,15 @@
+raw key lines compared: 400, byte-exact: True
+entries: 400
+duplicate-value groups: 8
+  VALUE 该套餐包含 {{count}} 个并发会话  == 2 keys
+  VALUE 报告最多包含 500 条建议操作。另有 {{count, number}} 条操作被排除在外。  == 2 keys
+  VALUE 此更改将撤销 {{count}} 个不符合新策略的令牌。  == 2 keys
+  VALUE 此更改会阻止 {{count}} 个已启用的自动化  == 2 keys
+  VALUE 此仓库（根仓库加 {{count}} 个蓝图）已预克隆并配置好，供新的 Devin 会话使用  == 2 keys
+  VALUE 此建议编辑的是遵循其规范蓝图的仓库，因此更改会保存在那里。{{count}} 个环境遵循该蓝图，将被重新构建。  == 2 keys
+  VALUE 此操作将新增 {{count}} 个额外席位（每席位 {{price}}，按当前账单周期按比例计费）。  == 2 keys
+  VALUE 威胁  == 2 keys
+
+final-punctuation mismatches (0):
+
+FAILURES: 0

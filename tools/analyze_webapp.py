@@ -28,7 +28,7 @@ analyze_webapp.py — 分析新版 Agent UI（devin-webapp-host）的 i18n 资�
     tools/data/webapp.json       + covered / missing / todo
     tools/data/webapp.md         覆盖率报告
 """
-import json, os, re, subprocess, sys
+import json, os, re, subprocess, sys, glob
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from _paths import DEVIN_APP as _APP, DATA as _DATA, DICT as _DICT, PLUGIN as _PLUGIN  # noqa: E402
@@ -53,6 +53,10 @@ def load_dict():
                 dd = json.load(f)
                 dd.pop("_comment", None)
                 d.update(dd)
+    # w*.json 分批译文：尚未折叠进 dict/webapp-zh.json 时也认成已覆盖。
+    for p in sorted(glob.glob(os.path.join(_DATA, "zh", "webapp", "w*.json"))):
+        with open(p, "r", encoding="utf-8") as f:
+            d.update(json.load(f))
     return d
 
 

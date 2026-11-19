@@ -124,6 +124,17 @@ function Eu({pseudoLocale: e = !1, englishOverrides: t} = {}) { … Mt.use(Mn).i
 Mt.isInitialized || Eu()
 ```
 
+**3.14.30819 的变化**（实证见 `tools/data/webapp-314-anchor.md`）：
+
+- chunk 改名为 `chunk-entry-host-editor-mode-menu-*.js`（多了 `chunk-` 前缀）；
+- 混淆名变化：`Mt`→`at`、`Eu`→`Jd`、`Mn`→`pd`，**资源根 `mu` 与 `hu` 未变**；
+- 守卫语句变为 `at.isInitialized||Jd()`；字符串字面量全部改用反引号；
+- i18next init 结构不变：`n={en:{translation:t?JSON.parse(JSON.stringify(mu)):mu,review:hu}}`、
+  `at.use(pd).init({resources:n,lng:`en`,fallbackLng:`en`,ns:[`translation`,`review`],defaultNS:`translation`,…})`。
+
+插件代码以 `HOST_ANCHORS` 数组同时接受两种守卫、以 `HOST_CHUNK_PREFIXES` 同时匹配两种
+chunk 前缀，因此 3.11 与 3.14 安装都能落地。
+
 要点：
 
 - 有**真实的多语言机制**（`ja` 5,030 key、`es` 4,846 key、`pt` 1,229 key），但**没有中文**；

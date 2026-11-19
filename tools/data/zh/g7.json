@@ -1,7 +1,10 @@
 {
+  "**For Cognition Platform deployments**: connect this Devin install to the full Cognition Platform. Only enable if your administrator confirms your deployment runs the full Cognition Platform — an incorrect setting will break Devin. Requires a restart after toggling.": "**适用于 Cognition Platform 部署**：将此 Devin 安装连接到完整的 Cognition Platform。只有在管理员确认你的部署运行完整版 Cognition Platform 时才启用——错误的设置会导致 Devin 无法使用。切换后需要重启。",
   "**For multi-tenant deployments (Secure, EU, FedRAMP)**: Base URL of your Devin portal (e.g., `https://your-company.devin.com`). Requires a restart after toggling.": "**适用于多租户部署（Secure、EU、FedRAMP）**：你的 Devin 门户的基础 URL（例如 `https://your-company.devin.com`）。切换后需要重启。",
   "**For multi-tenant deployments (Secure, EU, FedRAMP)**: Base URL of your Devin portal (e.g., `https://your-company.windsurf.com`). Requires a restart after toggling.": "**适用于多租户部署（Secure、EU、FedRAMP）**：你的 Devin 门户的基础 URL（例如 `https://your-company.windsurf.com`）。切换后需要重启。",
   "Add New": "新增",
+  "Keep Devin error notifications on screen until you dismiss them.": "让 Devin 的错误通知保持在屏幕上，直到你手动关闭。",
+  "Path to a local build of \"Devin Computer Use.app\" (macOS). Only for source builds; packaged builds use the helper in the app bundle. A CLI signed by Cognition refuses a helper that we did not sign, so a local helper also needs a local CLI build.": "本地构建的“Devin Computer Use.app”（macOS）的路径。仅适用于源码构建；打包版本使用应用捆绑包中的辅助程序。Cognition 签名的 CLI 会拒绝运行未经我们签名的辅助程序，因此本地辅助程序也需要本地构建的 CLI。",
   "Add a Distro": "添加发行版",
   "Add current file to conversation": "将当前文件添加到对话",
   "Allow Cascade, tab, and supercomplete to view and edit the files in .gitignore.": "允许 Cascade、Tab 和 Supercomplete 查看并编辑 .gitignore 中的文件。",

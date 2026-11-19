@@ -61,11 +61,16 @@ L("中文语言包     :", _LP)
 # ───────────────────────── 读译文 ─────────────────────────
 todo = rd(os.path.join(_DATA, "todo.json"))["by_file"]      # {file: [{key,en}]}
 en2zh = {}
-for p in sorted(glob.glob(os.path.join(_DATA, "zh", "g[0-9]*.json"))):
+# n*.json：3.14 大更新（NLS 缺口 7,027 条）的分批译文；与 g 词表同格式、直接并入。
+NLS_GLOBS = ("g[0-9]*.json", "n[0-9]*.json")
+nls_tables = []
+for pat in NLS_GLOBS:
+    nls_tables.extend(sorted(glob.glob(os.path.join(_DATA, "zh", pat))))
+for p in nls_tables:
     d = rd(p)
     d.pop("_comment", None)
     en2zh.update(d)
-L("NLS 译文条数   :", len(en2zh), "（来自", len(glob.glob(os.path.join(_DATA, 'zh', 'g[0-9]*.json'))), "个词表）")
+L("NLS 译文条数   :", len(en2zh), "（来自", len(nls_tables), "个词表）")
 
 # ───────────────────────── 1. NLS 补充表 ─────────────────────────
 supp = {}
@@ -207,8 +212,11 @@ L("[3] DOM 通用词典: %s 条（由 %s 条 NLS 原文反查）(%.2f MB)"
 #   assets/webapp-i18n.json    i18next 覆盖层用：键是 i18n key（点分），值是中文
 #                              → 含 {{...}} 的反而要保留（i18next 会做插值）
 webapp_zh = {}
+# w*.json：分批翻译产物（todo 切片），未合并进 dict/webapp-zh.json 时也直接拾取。
+# 与 README 的合并命令语义一致（那边会把同批文件折叠进 webapp-zh.json，重复读取无害）。
 for p in (os.path.join(_DICT, "webapp-zh.json"),
-          os.path.join(_DATA, "zh", "webapp-merged.json")):
+          os.path.join(_DATA, "zh", "webapp-merged.json"),
+          *sorted(glob.glob(os.path.join(_DATA, "zh", "webapp", "w*.json")))):
     if os.path.exists(p):
         webapp_zh.update(rd(p))
 L("\n[4] webapp 词表:", len(webapp_zh), "条")

@@ -1,29 +1,30 @@
 Devin 安装目录 : C:\Users\27837\AppData\Local\Programs\Devin\resources\app
-中文语言包     : C:\Users\27837\.devin\extensions\ms-ceintl.vscode-language-pack-zh-hans-1.126.0-universal
-NLS 译文条数   : 956 （来自 8 个词表）
+中文语言包     : C:\Users\27837\.devin\extensions\ms-ceintl.vscode-language-pack-zh-hans-1.131.0-universal
+NLS 译文条数   : 6925 （来自 23 个词表）
 
-[1] NLS 补充表: 162 条 / 28 个源文件
-[2b] 品牌名回正: 0 条
-[2] main.i18n.json: 剔除死条目 0 条, 新增 0 条, 总 21,161 条, 1.58 MB
-[3] DOM 通用词典: 9,775 条（由 21,210 条 NLS 原文反查）(0.59 MB)
+[1] NLS 补充表: 6928 条 / 720 个源文件
+    ⚠ 未命中译文: 99 ['{0} {1}', '{0} · {1}', '{0}: {1}']
+[2b] 品牌名回正: 1 条
+[2] main.i18n.json: 剔除死条目 692 条, 新增 6928 条, 总 27,398 条, 2.16 MB
+[3] DOM 通用词典: 12,385 条（由 27,547 条 NLS 原文反查）(0.73 MB)
 
-[4] webapp 词表: 11094 条
-    人工校订词表: 285 条
-    assets/ui-strings-zh.json: 11,233 条 (0.71 MB)
-    assets/webapp-i18n.json: 11,747 条 / 309 个命名空间 (0.57 MB)
+[4] webapp 词表: 28599 条
+    人工校订词表: 292 条
+    assets/ui-strings-zh.json: 23,419 条 (1.69 MB)
+    assets/webapp-i18n.json: 31,961 条 / 426 个命名空间 (1.85 MB)
 
-[5] 扩展贡献点译文: 254 条 / 字段 254
+[5] 扩展贡献点译文: 230 条 / 字段 230
 
 {
  "devinDir": "C:\\Users\\27837\\AppData\\Local\\Programs\\Devin\\resources\\app",
- "langpackDir": "C:\\Users\\27837\\.devin\\extensions\\ms-ceintl.vscode-language-pack-zh-hans-1.126.0-universal",
- "langpackVersion": "1.126.0",
- "nlsPairs": 162,
- "nlsFiles": 28,
- "nlsTotal": 21161,
- "uiDict": 9775,
- "webappDict": 11094,
- "webappI18n": 11747,
- "extFields": 254,
- "extZh": 254
+ "langpackDir": "C:\\Users\\27837\\.devin\\extensions\\ms-ceintl.vscode-language-pack-zh-hans-1.131.0-universal",
+ "langpackVersion": "1.131.0",
+ "nlsPairs": 6928,
+ "nlsFiles": 720,
+ "nlsTotal": 27398,
+ "uiDict": 12385,
+ "webappDict": 28599,
+ "webappI18n": 31961,
+ "extFields": 230,
+ "extZh": 230
 }

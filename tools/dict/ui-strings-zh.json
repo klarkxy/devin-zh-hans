@@ -84,5 +84,12 @@
   "Problems": "问题",
   "Output": "输出",
   "Debug Console": "调试控制台",
-  "Extensions Marketplace": "扩展市场"
+  "Extensions Marketplace": "扩展市场",
+  "Bots": "机器人",
+  "Pin to top": "固定到顶部",
+  "Pin to left rail": "固定到左侧栏",
+  "Share as template": "共享为模板",
+  "Nothing in progress right now": "目前没有进行中的会话",
+  "View all Bots": "查看所有机器人",
+  "Template library": "模板库"
 }

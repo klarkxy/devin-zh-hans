@@ -19,8 +19,17 @@ const APP = (() => {
   return null;
 })();
 
-const chunkPath = path.join(APP, 'resources', 'app', 'out', 'vs', 'workbench',
-  'devin-webapp-host', 'assets', 'entry-host-editor-mode-menu-DUnUGWLA.js');
+const chunkDir = path.join(APP, 'resources', 'app', 'out', 'vs', 'workbench',
+  'devin-webapp-host', 'assets');
+// 3.11 chunk 名以 entry-host-… 开头；3.14 变为 chunk-entry-host-…（双前缀动态定位）。
+const PREFIXES = ['entry-host-editor-mode-menu', 'chunk-entry-host-editor-mode-menu'];
+let chunkPath = null;
+for (const f of fs.readdirSync(chunkDir)) {
+  if (PREFIXES.some((p) => f.startsWith(p)) && f.endsWith('.js')) {
+    chunkPath = path.join(chunkDir, f);
+    break;
+  }
+}
 const src = fs.readFileSync(chunkPath, 'utf8');
 
 // ── 1. 载荷直接用当前产物（不依赖安装目录里的历史形态）──
@@ -74,17 +83,16 @@ const cases = [
   ['sidebar.recent', '最近'],
   ['nav.security', '安全'],
   ['composerTips.sidebar', '提示：隐藏或显示侧边栏'],
+  ['composerTips.agentLocation', '提示：在云端或本机上运行 Devin'],
   ['composerTips.newSession', '提示：开始新会话'],
-  ['composerTips.sessionNav', '提示：在会话之间切换'],
   ['nav.newSession', '新建会话'],
   ['settings.highContrast', '高对比度模式'],
   ['settings.uiFont', '界面字体'],
   ['localSettings.general.openEditorSettings.label', '打开编辑器设置'],
   ['localSettings.sections.devinTab', 'Devin 标签页'],
-  ['localSettings.chisel.descriptionWithPath', '这些设置仅适用于 Devin Local，并保存到 <fileLink>{{path}}</fileLink>'],
-  ['notificationPreferences.description', '选择哪些通知进入收件箱'],
+  ['localSettings.chisel.descriptionWithPath', '这些设置仅适用于 Devin Local'],
+  ['notificationPreferences.description', '收件箱'],
   ['notificationPreferences.mobilePushFor', '将“{{name}}”推送到移动端'],
-  ['settings.autoapproveManageToolsDescription', '你拥有的会话在以下情况下无需事先询问'],
 ];
 
 let pass = 0;
@@ -101,14 +109,19 @@ for (const [key, want] of cases) {
 // 整个命名空间会被替换成只含中文子集的对象，未翻译的 key 直接消失，
 // 界面回退成显示 key 本身（localSettings.general.openEditorSettings.label）。
 console.log('\n== 深合并完整性（未覆盖的英文 key 不能丢）==');
-// 用例必须是「载荷确实没覆盖」的 key —— 否则测不出浅合并的破坏。
-// listRow.addItemTo / common.ok 在载荷里没有中文，合并后必须保持英文原文。
+// guard 必须是「载荷确实没覆盖」的 key —— w 批次已把 localSettings 全覆盖，
+// 改用确认不在载荷里的键（3.14 的英文 key 空间有 3.3 万个，载荷覆盖 31,961）。
+const zhKeys = new Set(Object.keys(zh).flatMap((ns) => Object.keys(zh[ns]).map((k) => ns + '.' + k)));
 const guards = [
-  ['localSettings', 'listRow.addItemTo', 'Add item to {{id}}'],
-  ['localSettings', 'common.ok', 'Ok'],
   ['transcript', 'someUncoveredKey', 'Untouched English'],
+  ['settings', 'anotherUncoveredKey', 'Still English'],
+  ['nav', 'uncoveredPlaceholder', 'Raw'],
 ];
 for (const [ns, k, en] of guards) {
+  if (zhKeys.has(ns + '.' + k)) {
+    console.log('⚠ guard ' + ns + '.' + k + ' 已被载荷覆盖，需换一个');
+    process.exit(1);
+  }
   mu[ns] = mu[ns] || {};
   mu[ns][k] = en;
 }

@@ -137,8 +137,10 @@ if LP:
 P("\n## 4. Agent UI（webapp-host）与 DOM 层\n")
 chunk = None
 if os.path.isdir(WEBAPP_DIR):
+    # 3.11 前缀 entry-host-…；3.14 前缀 chunk-entry-host-…（双前缀都认）。
+    _prefixes = ("entry-host-editor-mode-menu", "chunk-entry-host-editor-mode-menu")
     for f in sorted(os.listdir(WEBAPP_DIR)):
-        if not f.startswith("entry-host-editor-mode-menu"):
+        if not f.startswith(_prefixes):
             continue
         p = os.path.join(WEBAPP_DIR, f)
         s = open(p, "r", encoding="utf-8", errors="ignore").read()

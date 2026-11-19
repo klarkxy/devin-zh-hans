@@ -1,93 +1,93 @@
 # webapp-host（新版 Agent UI）i18n 资源与词典覆盖
 
-- i18n chunk: `entry-host-editor-mode-menu-DUnUGWLA.js`
-- 命名空间: **317**
-- 叶子 key: **19,269**
-- 去重后英文原文: **15,361**
-- 词典已覆盖: **8,358** (54.4%)
-- 仍缺中文: **7,003**（其中可整串替换 6,864）
+- i18n chunk: `chunk-entry-host-editor-mode-menu-BWLlgqZu.js`
+- 命名空间: **427**
+- 叶子 key: **32,770**
+- 去重后英文原文: **25,283**
+- 词典已覆盖: **14,074** (55.7%)
+- 仍缺中文: **11,209**（其中可整串替换 10,964）
 
 ## 最大的命名空间
 
 | 条数 | 命名空间 |
 |---:|---|
-| 3938 | `settings` |
-| 1288 | `automations` |
-| 706 | `transcript` |
-| 617 | `worklog` |
-| 592 | `analyticsRevamp` |
-| 535 | `billing` |
-| 368 | `sidebar` |
-| 358 | `oncall` |
-| 343 | `readiness` |
-| 339 | `boards` |
-| 307 | `bots` |
-| 277 | `admin` |
-| 269 | `onboarding` |
-| 252 | `apps` |
-| 248 | `scopedTriggers` |
+| 6329 | `settings` |
+| 1505 | `automations` |
+| 1350 | `settingsPages` |
+| 1168 | `bots` |
+| 949 | `transcript` |
+| 940 | `worklog` |
+| 935 | `boards` |
+| 865 | `billing` |
+| 777 | `analyticsRevamp` |
+| 504 | `workspace` |
+| 465 | `oncall` |
+| 446 | `securityRedTeaming` |
+| 395 | `sidebar` |
+| 360 | `enterprise` |
+| 351 | `jira` |
 
 ## 缺口样例（前 60）
 
 | 命名空间 | key | 英文 |
 |---|---|---|
-| `defaultPrimaryBillingOrg` | `description` | Applies when a user has no primary billing organization. Existing assignments and organization acces |
-| `adminBudgetBackfill` | `account` | Account: {{accountId}} |
-| `adminBudgetBackfill` | `description` | Sync eligible orgs to budgets with the current feature flags. This can create budgets and replace or |
-| `adminBudgetBackfill` | `success` | Budget backfill complete in {{duration}} seconds. |
-| `adminBudgetBackfill` | `failure` | Budget backfill request failed. If the connection was lost, the changes may have committed. {{error} |
-| `adminBudgetBackfill` | `confirmDescription` | Sync eligible orgs for {{accountId}} to budgets. This can create budgets and replace org-linked budg |
-| `adminGovernance` | `rollout.description` | Run the grants rollout backfills for this account as background jobs, in order, with the account's U |
-| `adminGovernance` | `rollout.runStep` | Run {{step}} |
-| `adminGovernance` | `rollout.succeeded` | Succeeded {{time}} |
-| `adminGovernance` | `rollout.failed` | Failed {{time}} |
-| `adminGovernance` | `rollout.confirmTitle` | Run {{step}}? |
-| `adminGovernance` | `rollout.confirmDescription` | Runs {{step}} for {{accountId}} in a background job. Committed batches stay if it fails. |
-| `adminGovernance` | `rollout.confirmDescriptionAll` | Runs all {{count}} backfills for {{accountId}} in order, one job each. The chain stops at the first  |
-| `adminGovernance` | `rollout.confirmDescriptionBitmaps` | Runs {{step}} for {{accountId}} in a background job, as one transaction. Grant changes for this acco |
-| `adminGovernance` | `rollout.abortStep` | Abort {{step}} |
-| `adminGovernance` | `rollout.abortConfirmTitle` | Abort {{step}}? |
-| `adminGovernance` | `rollout.abortConfirmDescription` | Stops {{step}} for {{accountId}} within a few seconds. Committed batches stay and the step fails, so |
-| `adminJobs` | `actionsNamed` | Actions for {{name}} |
-| `adminJobs` | `batch.help` | Each entry has args matching the task's schema and an optional dedupe_key. Up to 100,000 entries / 6 |
-| `adminJobs` | `batch.ready_one` | {{count}} entry ready |
-| `adminJobs` | `batch.ready_other` | {{count}} entries ready |
-| `adminJobs` | `batch.confirmTitle_one` | Enqueue {{count}} entry? |
-| `adminJobs` | `batch.confirmTitle_other` | Enqueue {{count}} entries? |
-| `adminJobs` | `batch.confirmDescription` | Run {{task}} for every valid entry. Each job uses the account from its arguments, or the system acco |
-| `adminJobs` | `batch.progress` | {{processed}} / {{total}} entries processed: {{enqueued}} enqueued, {{skipped}} deduplicated, {{fail |
-| `adminJobs` | `batch.stopped` | Upload stopped. Some jobs in the last request may have committed without a confirmed response. Later |
-| `adminJobs` | `batch.entryError` | Entry {{index}}: {{detail}} |
-| `adminJobs` | `breakGlass.queues` | Paused queues: {{names, list}} |
-| `adminJobs` | `breakGlass.tasks` | Paused tasks and crons: {{names, list}} |
-| `adminJobs` | `breakGlass.reason` | Reason: {{reason}} |
-| `adminJobs` | `breakGlass.source` | Set in {{location}}, not on this page. It applies on top of the holds below. Delete the file to lift |
-| `adminJobs` | `breakGlass.unreadable` | The break-glass file {{location}} can't be used: {{error}}. Dispatchers and workers keep the last ve |
-| `adminJobs` | `breakGlass.checkFailed` | Couldn't check the break-glass pause: {{error}}. A pause may be on. |
-| `adminJobs` | `control.pauseOrCapNamed` | Pause / cap {{name}} |
-| `adminJobs` | `control.title` | Pause or cap {{name}} |
-| `adminJobs` | `control.saved` | Hold on {{name}} saved |
-| `adminJobs` | `control.lifted` | Hold on {{name}} lifted |
-| `adminJobs` | `control.paused` | paused |
-| `adminJobs` | `control.capped` | max {{count}} in flight |
-| `adminJobs` | `control.scopeQueue` | queue |
-| `adminJobs` | `control.scopeTask` | task |
-| `adminJobs` | `control.editNamed` | Edit {{name}} |
-| `adminJobs` | `control.liftNamed` | Lift hold on {{name}} |
-| `adminJobs` | `taskRequeueTitle` | Requeue failed jobs for {{task}} on {{queue}} |
-| `adminJobs` | `taskRequeued_one` | Requeued {{count}} failed job for {{task}} on {{queue}} |
-| `adminJobs` | `taskRequeued_other` | Requeued {{count}} failed jobs for {{task}} on {{queue}} |
-| `adminJobs` | `taskRemaining` | {{done}}; {{remaining}} still failed (run again to continue) |
-| `adminJobs` | `enqueue.descriptionSingle` | Same path as app.jobs.enqueue() in code. The audit log records task, queue and account, not the argu |
-| `adminJobs` | `enqueue.maxAttempts_one` | max {{count}} attempt |
-| `adminJobs` | `enqueue.maxAttempts_other` | max {{count}} attempts |
-| `adminJobs` | `enqueue.timeout` | timeout {{seconds}}s |
-| `adminJobs` | `enqueue.invalidJson` | Invalid JSON: {{detail}} |
-| `adminJobs` | `enqueue.confirmTitle` | Enqueue {{task}} |
-| `adminJobs` | `enqueue.deduplicated` | Not enqueued: a pending {{task}} job with this dedupe key already exists |
-| `adminJobs` | `enqueue.enqueued` | Enqueued job {{jobId}} on {{queue}} |
-| `adminJobs` | `info.openNamed` | Details for {{name}} |
-| `adminJobs` | `info.holdSetBy` | Set by {{by}} at {{at}} |
-| `accountTerms` | `description` | Before using Devin, an admin needs to accept the terms for this account. One acceptance covers every |
-| `accountTerms` | `account` | Account: {{accountName}} |
-| `mcpConfiguration` | `oauth` | OAuth |
+| `adminPromotionOwner` | `label` | Enterprise or org |
+| `adminPromotionOwner` | `placeholder` | Search by name or ID |
+| `adminPromotionOwner` | `description` | Selecting an org in an enterprise chooses that enterprise and adds the org under Org IDs. |
+| `adminPromotionOwner` | `empty` | No matching enterprises or orgs |
+| `adminPromotionOwner` | `budgetHint` | In dollars or ACUs, whichever the account's plan is billed in. Select an enterprise or org first. |
+| `chatgptPlanCta` | `connect` | Connect ChatGPT |
+| `chatgptPlanCta` | `inbox.body` | Connect a personal Go, Plus or Pro plan to run supported models on it instead of your Devin usage. |
+| `chatgptPlanCta` | `inbox.title` | Use your ChatGPT plan in Devin |
+| `releaseManager` | `edit` | Edit release manager |
+| `releaseManager` | `saveFailed` | Couldn’t save changes. Try again. |
+| `releaseManager` | `unknownStatus` | Unknown status |
+| `releaseManager` | `releaseHistory` | Release history |
+| `releaseManager` | `search` | Search releases… |
+| `releaseManager` | `release` | Release |
+| `releaseManager` | `updatesRolledOut` | Updates rolled out |
+| `releaseManager` | `tracked` | Tracked |
+| `releaseManager` | `expandUpdates_one` | Show {{count}} update for {{release}} |
+| `releaseManager` | `expandUpdates_other` | Show {{count}} updates for {{release}} |
+| `releaseManager` | `hotfixTickets` | Hotfix tickets |
+| `releaseManager` | `noReleases` | No releases in this period. New deploys will appear here. |
+| `releaseManager` | `noMatches` | No matching releases. |
+| `releaseManager` | `deploySources` | Deploy sources |
+| `releaseManager` | `minimumRisk` | Minimum risk: {{risk}} |
+| `releaseManager` | `ticketLoadFailed` | Couldn’t load this release. It may have been removed. |
+| `releaseManager` | `loadFailed` | Couldn’t load this release manager. It may have been removed or you may not have access. |
+| `releaseManager` | `back` | Back to Releases |
+| `releaseManager` | `releases` | Releases |
+| `releaseManager` | `lastDays_one` | Last {{count}} day |
+| `releaseManager` | `lastDays_other` | Last {{count}} days |
+| `releaseManager` | `historyLoadFailed` | Couldn’t load release history. |
+| `releaseManager` | `releasesMonitored` | Releases monitored |
+| `releaseManager` | `activeReleases` | Active releases |
+| `releaseManager` | `completedReleases` | Completed releases |
+| `releaseManager` | `chartLabel` | Releases and hotfix updates tracked per day |
+| `releaseManager` | `deleteTitle` | Delete release manager? |
+| `releaseManager` | `deleteDescription` | Delete {{name}}? This stops monitoring and deletes its release board and all release tickets. |
+| `releaseManager` | `deleteFailed` | Couldn’t delete this release manager. Try again. |
+| `releaseManager` | `modeDescription` | The mode the release manager’s sessions run in. |
+| `releaseManager` | `mcpDescription` | The MCP servers and tools the release manager’s sessions can use. |
+| `releaseManager` | `metadataDescription` | Add key-value pairs to organize and filter your release managers |
+| `releaseManager` | `sessionSettingsDescription` | How sessions this release manager starts are run |
+| `onboardingRedesign` | `botTitle` | Start with a {{botName}} |
+| `onboardingRedesign` | `botBody` | Auto-manage work at scale, handle recurring tasks, and surface key decisions when needed |
+| `onboardingRedesign` | `botCaption` | Your {{botName}} can help you finish setting up, tackle a project, or act as your Chief of Staff. |
+| `onboardingRedesign` | `botDefaultName` | {{name}}’s {{botName}} |
+| `onboardingRedesign` | `botPreviousAvatar` | Previous avatar |
+| `onboardingRedesign` | `botNextAvatar` | Next avatar |
+| `onboardingRedesign` | `navigation` | Onboarding navigation |
+| `onboardingRedesign` | `gitConnectedTitle` | Your Git provider is connected |
+| `onboardingRedesign` | `gitBody` | Clone repositories, push branches, and create pull requests all in the cloud. |
+| `onboardingRedesign` | `gitAlreadyConnectedTitle` | Already connected to {{provider}} |
+| `onboardingRedesign` | `gitConnectedBody` | Clone repositories, push branches, and create pull requests all in the cloud. Add or remove more lat |
+| `onboardingRedesign` | `reposBody` | Start Devin sessions faster, at lower cost, and more reliably in your default environment. |
+| `onboardingRedesign` | `reposOverflowMore_one` | {{formattedCount}} more repository |
+| `onboardingRedesign` | `reposOverflowMore_other` | {{formattedCount}} more repositories |
+| `onboardingRedesign` | `reposSelected_zero` | You selected no repositories |
+| `onboardingRedesign` | `reposSelected_one` | You selected {{formattedCount}} repository |
+| `onboardingRedesign` | `reposSelected_other` | You selected {{formattedCount}} repositories |
+| `onboardingRedesign` | `addRepos_one` | Add {{count}} repository |
+| `onboardingRedesign` | `addRepos_other` | Add {{count}} repositories |

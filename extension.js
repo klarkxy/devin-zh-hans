@@ -278,18 +278,28 @@ function applyExtensionManifests(ctx) {
 //   （`localSettings.general.openEditorSettings.label`）。全量算下来会丢 7,843 个
 //   英文 key。所以注入一个递归合并函数，把中文逐层写进现有英文对象。
 const WEBAPP_DIR = 'out/vs/workbench/devin-webapp-host';
-const HOST_ANCHOR = 'Mt.isInitialized||Eu()';
+// 3.11 的锚点是 Mt.isInitialized||Eu()；3.14 混淆名变为 at/Jd（资源根 mu 两个版本都没变，
+// 已验证：translation:t?JSON.parse(JSON.stringify(mu)):mu, review:hu 原样保留）。
+// 两个锚点都接受：新装 Devin 自动用新锚点，旧版继续用旧锚点，互不干扰。
+const HOST_ANCHORS = ['Mt.isInitialized||Eu()', 'at.isInitialized||Jd()'];
+// 3.11 的 chunk 名以 entry-host-… 开头；3.14 变为 chunk-entry-host-…（Vite/rolldown 新前缀）。
+const HOST_CHUNK_PREFIXES = ['entry-host-editor-mode-menu', 'chunk-entry-host-editor-mode-menu'];
 const HOST_MARK = '/*devin-zh*/';
 const HOST_END = '/*/devin-zh*/';
+
+function hostAnchorIn(s) {
+  for (const a of HOST_ANCHORS) if (s.includes(a)) return a;
+  return null;
+}
 
 function findHostChunk(app) {
   const dir = path.join(app, WEBAPP_DIR, 'assets');
   if (!fs.existsSync(dir)) return null;
   for (const f of fs.readdirSync(dir)) {
-    if (!f.startsWith('entry-host-editor-mode-menu') || !f.endsWith('.js')) continue;
+    if (!HOST_CHUNK_PREFIXES.some((p) => f.startsWith(p)) || !f.endsWith('.js')) continue;
     const p = path.join(dir, f);
     try {
-      if (fs.readFileSync(p, 'utf8').includes(HOST_ANCHOR)) return p;
+      if (hostAnchorIn(fs.readFileSync(p, 'utf8'))) return p;
     } catch { }
   }
   return null;
@@ -377,37 +387,46 @@ function applyWebappI18n(ctx) {
     // 旧式载荷形如 `/*devin-zh*/Mt.isInitialized||Eu(),Mt.addResourceBundle(…)`，
     // 锚点被吞进了载荷里 —— 先整体摘掉，再补回锚点，最后把新载荷插到锚点之前。
     let next = s.slice(0, a0) + s.slice(b0 + HOST_END.length);
-    if (!next.includes(HOST_ANCHOR)) {
-      // 锚点原本在载荷内部，摘掉后需要补回。定位闭包尾 `cL=s(),` 或直接找载荷原位置。
+    let anchor = hostAnchorIn(next);
+    if (!anchor) {
+      // 锚点原本在载荷内部，摘掉后需要补回。优先用当前 chunk 的守卫形态（3.11 或 3.14），
+      // 再退回闭包尾 `cL=s(),` 定位。
+      const guard = HOST_ANCHORS.find((a) => old.includes(a)) || HOST_ANCHORS[0];
       const near = next.slice(Math.max(0, a0 - 60), a0);
       if (/cL=s\(\),$/.test(near)) {
-        next = next.slice(0, a0) + HOST_ANCHOR + ',' + next.slice(a0);
+        next = next.slice(0, a0) + guard + ',' + next.slice(a0);
       } else {
-        next = next.replace(/(cL=s\(\),)\s*/, '$1' + HOST_ANCHOR + ',');
+        next = next.replace(/(cL=s\(\),)\s*/, '$1' + guard + ',');
       }
+      anchor = hostAnchorIn(next);
     }
-    const at2 = next.indexOf(HOST_ANCHOR);
-    if (at2 >= 0) {
+    if (anchor) {
+      const at2 = next.indexOf(anchor);
       next = next.slice(0, at2) + payload + ',' + next.slice(at2);
       // 旧载荷两侧原本各有一个表达式分隔逗号；整体摘掉再插入会留下 `,,/*devin-zh*/`。
       // 只收敛注入点处的重复逗号，不改其它代码。
       next = next.replace(/,(?:\s*,)+\s*\/\*devin-zh\*\//g, ',' + HOST_MARK);
       // 锚点原本紧跟的逗号可能变成尾逗号（`…,Mt.isInitialized||Eu(),}`），必须收敛，
-      // 否则整个 chunk 语法错误、Devin 起不来。
-      next = next.replace(/(Mt\.isInitialized\|\|Eu\(\)),(\s*\})/g, '$1$2');
+      // 否则整个 chunk 语法错误、Devin 起不来。对两种守卫形态都做。
+      for (const a of HOST_ANCHORS) {
+        next = next.replace(new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ',(\\s*\\})', 'g'), '$1$2');
+      }
     }
     if (!writeValidWebappChunk(chunk, next)) return { webapp: false, changed: false };
     log('已更新 webapp 中文资源（' + Object.keys(zh).length + ' 个命名空间根）');
     return { webapp: true, changed: true };
   }
 
-  const at = s.indexOf(HOST_ANCHOR);
+  const anchor = hostAnchorIn(s);
+  const at = anchor ? s.indexOf(anchor) : -1;
   if (at < 0) return { webapp: false, changed: false };
   backup(chunk, 'webapp');
-  // 必须插在锚点**之前**：Object.assign 先改 mu，Eu() 的 init 才会把中文一并注册。
-  // 插在之后则 init 已用旧 mu 完成，改 mu 不再影响已注册的 resources。
+  // 必须插在锚点**之前**：Object.assign 先改 mu，init 守卫函数（Eu()/Jd()）的 init
+  // 才会把中文一并注册。插在之后则 init 已用旧 mu 完成，改 mu 不再影响已注册的 resources。
   s = s.slice(0, at) + payload + ',' + s.slice(at);
-  s = s.replace(/(Mt\.isInitialized\|\|Eu\(\)),(\s*\})/g, '$1$2');
+  for (const a of HOST_ANCHORS) {
+    s = s.replace(new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ',(\\s*\\})', 'g'), '$1$2');
+  }
   // 语法自检：写坏 chunk 会让 Devin 起不来，宁可跳过也不落盘
   if (!writeValidWebappChunk(chunk, s)) return { webapp: false, changed: false };
   log('已注入 webapp 中文资源（' + Object.keys(zh).length + ' 个命名空间根）');

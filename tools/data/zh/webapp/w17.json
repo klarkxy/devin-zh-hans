@@ -1,0 +1,9 @@
+{
+  "Pin to top": "固定到顶部",
+  "Pin to left rail": "固定到左侧栏",
+  "Share as template": "共享为模板",
+  "Nothing in progress right now": "目前没有进行中的会话",
+  "Stop {{botName}} from responding. You can unarchive it later.": "让 {{botName}} 停止响应。你之后可以取消归档。",
+  "Permanently delete this {{botName}}, its settings and its sessions": "永久删除此 {{botName}} 及其设置和会话",
+  "Bots": "机器人"
+}

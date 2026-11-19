@@ -82,10 +82,11 @@ function buildSandbox() {
     const d = path.join(dstApp, rel);
     if (!fs.existsSync(s)) continue;
     if (fs.statSync(s).isDirectory()) {
-      // webapp-host/assets 有 91 MB，只复制 i18n 入口那个 chunk
+      // webapp-host/assets 有 91 MB，只复制 i18n 入口 chunk（两种前缀都匹配）
       fs.mkdirSync(d, { recursive: true });
       for (const f of fs.readdirSync(s)) {
-        if (f.startsWith('entry-host-editor-mode-menu')) {
+        if (f.startsWith('entry-host-editor-mode-menu')
+          || f.startsWith('chunk-entry-host-editor-mode-menu')) {
           fs.copyFileSync(path.join(s, f), path.join(d, f));
         }
       }
@@ -113,15 +114,19 @@ function buildSandbox() {
     // 回归场景：当前代码里已有一份旧词典，激活时必须替换载荷而不是叠加逗号。
     const dir = path.join(dstApp, 'out/vs/workbench/devin-webapp-host/assets');
     for (const f of fs.readdirSync(dir)) {
-      if (!f.startsWith('entry-host-editor-mode-menu')) continue;
-      const anchor = 'Mt.isInitialized||Eu()';
+      if (!f.startsWith('entry-host-editor-mode-menu')
+        && !f.startsWith('chunk-entry-host-editor-mode-menu')) continue;
+      // 两种守卫形态：3.11 用 Mt/Eu，3.14 用 at/Jd
+      const anchors = ['Mt.isInitialized||Eu()', 'at.isInitialized||Jd()'];
+      const raw = fs.readFileSync(path.join(dir, f), 'utf8');
+      const anchor = anchors.find((x) => raw.includes(x));
+      if (!anchor) throw new Error('测试 chunk 缺少注入锚点');
       const mark = '/*devin-zh*/', end = '/*/devin-zh*/';
       const oldPayload = mark + 'Object.assign(mu.account||(mu.account={}),{"__upgrade":"old"})' + end;
-      let base = fs.readFileSync(path.join(dir, f), 'utf8');
+      let base = raw;
       const a = base.indexOf(mark), b = base.indexOf(end);
       if (a >= 0 && b > a) base = base.slice(0, a) + oldPayload + base.slice(b + end.length);
-      else if (base.includes(anchor)) base = base.replace(anchor, oldPayload + ',' + anchor);
-      else throw new Error('测试 chunk 缺少注入锚点');
+      else base = base.replace(anchor, oldPayload + ',' + anchor);
       // 即使复制源已经带有本 bug 的重复逗号，测试也从合法的旧版状态开始。
       base = base.replace(/,(?:\s*,)+\s*\/\*devin-zh\*\//g, ',' + mark);
       fs.writeFileSync(path.join(dir, f), base, 'utf8');
@@ -245,11 +250,15 @@ setTimeout(() => {
   ok(nExt === FAMILY.length, '扩展覆盖 ' + nExt + '/' + FAMILY.length + '，占位符合计 ' + nZh);
 
   // 3) webapp i18next
+  // 3.11 chunk 名以 entry-host-… 开头；3.14 变为 chunk-entry-host-…。两种前缀都扫。
+  const HOST_PREFIXES = ['entry-host-editor-mode-menu', 'chunk-entry-host-editor-mode-menu'];
+  // 3.11 守卫 Mt.isInitialized||Eu()；3.14 为 at.isInitialized||Jd()（资源根 mu 未变）。
+  const GUARDS = ['Mt.isInitialized||Eu()', 'at.isInitialized||Jd()'];
   const wdir = path.join(APP, 'out', 'vs', 'workbench', 'devin-webapp-host', 'assets');
   let chunk = null;
   if (fs.existsSync(wdir)) {
     for (const f of fs.readdirSync(wdir)) {
-      if (!f.startsWith('entry-host-editor-mode-menu')) continue;
+      if (!HOST_PREFIXES.some((p) => f.startsWith(p))) continue;
       const p = path.join(wdir, f);
       if (fs.readFileSync(p, 'utf8').includes('/*devin-zh*/')) { chunk = p; break; }
     }
@@ -275,17 +284,20 @@ setTimeout(() => {
       '没有整体浅合并 mu 的旧形态');
     ok(!/Mt\.isInitialized\|\|Eu\(\),Mt\.addResourceBundle/.test(s),
       '没有残留旧式 addResourceBundle 载荷');
-    ok(s.includes('Mt.isInitialized||Eu()'), '原始初始化锚点保留（不破坏 Devin 自身逻辑）');
+    const guard = GUARDS.find((g) => s.includes(g));
+    ok(!!guard, '原始初始化锚点保留（不破坏 Devin 自身逻辑）'
+      + (guard ? '：' + guard : ''));
     ok(s.split('/*devin-zh*/').length === 2, '载荷只有一份（幂等）');
-    // ★ 深合并必须在锚点之前：Eu() 的 init 才会把中文注册进 resources。
+    // ★ 深合并必须在锚点之前：init 守卫函数的 init 才会把中文注册进 resources。
     //   插在锚点之后则 init 已用旧 mu 完成，改 mu 不再影响已注册的 resources ——
     //   这正是界面显示原始 key（sidebar.automations）的根因。
     const posMark = s.indexOf('/*devin-zh*/');
-    const posAnchor = s.indexOf('Mt.isInitialized||Eu()');
+    const posAnchor = guard ? s.indexOf(guard) : -1;
     ok(posMark >= 0 && posAnchor >= 0 && posMark < posAnchor,
       '载荷位于初始化锚点之前（init 时中文已就位）');
-    // 尾逗号会让整个 chunk 语法错误、Devin 起不来
-    ok(!/Mt\.isInitialized\|\|Eu\(\)\s*,\s*\}/.test(s), '锚点后无残留尾逗号（语法安全）');
+    // 尾逗号会让整个 chunk 语法错误、Devin 起不来（两种守卫形态都查）
+    ok(!/(?:Mt\.isInitialized\|\|Eu\(\)|at\.isInitialized\|\|Jd\(\))\s*,\s*\}/.test(s),
+      '锚点后无残留尾逗号（语法安全）');
 
     // 载荷的 key 必须真的能在 en 资源树里查到。
     // 载荷是「逐命名空间 Object.assign(mu.x||(mu.x={}),{…})」的逗号序列，
@@ -343,7 +355,8 @@ setTimeout(() => {
           '载荷 key 命中率 ' + (ratio * 100).toFixed(1) + '%（' + found + '/' + checked + '）'
           + (unknownSamples.length ? ' 未命中如: ' + unknownSamples.join(', ') : ''));
 
-        const probes = ['composerTips.sessionNav', 'composerTips.sidebar', 'sidebar.automations',
+        // 3.14 起 composerTips.sessionNav 改名 agentLocation（值也换了）
+        const probes = ['composerTips.agentLocation', 'composerTips.sidebar', 'sidebar.automations',
           'sidebar.recent', 'nav.newSession', 'settings.highContrast', 'settings.uiFont'];
         for (const p of probes) {
           let hitv = null;

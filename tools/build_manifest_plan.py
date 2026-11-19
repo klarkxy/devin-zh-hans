@@ -51,20 +51,35 @@ def keyfor(ext, path):
     return ext + "." + ".".join(parts)
 
 
-def collect(ext, pkg):
-    """返回 [(path, 英文)]，path 是 package.json 里的 JSON 指针。"""
+def collect(ext, pkg, nls_en=None):
+    """返回 [(path, 英文)]，path 是 package.json 里的 JSON 指针。
+
+    字段可能是两种形态：
+      1. 明文英文 —— 全新安装或 Devin 更新后的原始状态；
+      2. %key% —— 本插件（或上一版）已落地过，package.nls.json 里存有英文默认值。
+         Devin 更新会重写 package.json（恢复明文），但如果扩展没随版本变化，
+         已落地的 %key% 会保留；此时从 package.nls.json 反查英文，计划保持完整。
+    """
+    nls_en = nls_en or {}
+
+    def resolve(v):
+        """%key% → package.nls.json 里的英文默认值；解析不到返回 None（跳过）。"""
+        if not (isinstance(v, str) and v.startswith("%") and v.endswith("%")):
+            return v
+        return nls_en.get(v[1:-1])
+
     out = []
     c = pkg.get("contributes") or {}
 
     for i, cmd in enumerate(c.get("commands") or []):
         base = ["contributes", "commands", i]
         for f in ("title", "category"):
-            v = cmd.get(f)
+            v = resolve(cmd.get(f))
             if isinstance(v, str) and not v.startswith("%"):
                 out.append((base + [f], v))
 
     for i, a in enumerate(c.get("authentication") or []):
-        v = a.get("label")
+        v = resolve(a.get("label"))
         if isinstance(v, str) and not v.startswith("%"):
             out.append((["contributes", "authentication", i, "label"], v))
 
@@ -72,12 +87,12 @@ def collect(ext, pkg):
     cfg = cfg if isinstance(cfg, list) else ([cfg] if isinstance(cfg, dict) else [])
     for i, b in enumerate(cfg):
         base = ["contributes", "configuration"] + ([i] if isinstance(c.get("configuration"), list) else [])
-        v = b.get("title")
+        v = resolve(b.get("title"))
         if isinstance(v, str) and not v.startswith("%"):
             out.append((base + ["title"], v))
         for pk, pv in (b.get("properties") or {}).items():
             for f in ("markdownDescription", "description"):
-                v = pv.get(f)
+                v = resolve(pv.get(f))
                 if isinstance(v, str) and not v.startswith("%"):
                     out.append((base + ["properties", pk, f], v))
                     break
@@ -101,7 +116,16 @@ def main():
             continue
         with open(p, "r", encoding="utf-8") as f:
             pkg = json.load(f)
-        fields = collect(ext, pkg)
+        # 已落地过的扩展：package.nls.json 里有英文默认值，%key% 从这里反查
+        nls_en = {}
+        nls_path = os.path.join(EXT_ROOT, ext, "package.nls.json")
+        if os.path.exists(nls_path):
+            try:
+                with open(nls_path, "r", encoding="utf-8") as f:
+                    nls_en = json.load(f)
+            except Exception:
+                nls_en = {}
+        fields = collect(ext, pkg, nls_en)
         entries = []
         miss = []
         for path, en in fields:

@@ -1,13 +1,13 @@
 {
  "devinDir": "C:\\Users\\27837\\AppData\\Local\\Programs\\Devin\\resources\\app",
- "langpackDir": "C:\\Users\\27837\\.devin\\extensions\\ms-ceintl.vscode-language-pack-zh-hans-1.126.0-universal",
- "langpackVersion": "1.126.0",
- "nlsPairs": 162,
- "nlsFiles": 28,
- "nlsTotal": 21161,
- "uiDict": 9775,
- "webappDict": 11094,
- "webappI18n": 11747,
- "extFields": 254,
- "extZh": 254
+ "langpackDir": "C:\\Users\\27837\\.devin\\extensions\\ms-ceintl.vscode-language-pack-zh-hans-1.131.0-universal",
+ "langpackVersion": "1.131.0",
+ "nlsPairs": 6928,
+ "nlsFiles": 720,
+ "nlsTotal": 27398,
+ "uiDict": 12385,
+ "webappDict": 28599,
+ "webappI18n": 31961,
+ "extFields": 230,
+ "extZh": 230
 }

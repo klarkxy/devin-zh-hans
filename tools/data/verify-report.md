@@ -25,13 +25,13 @@
 
 | 扩展 | 占位符 | 无法解析 | 缺中文 |
 |---|---:|---:|---:|
-| `windsurf` | 166 | 0 | 0 |
+| `windsurf` | 142 | 0 | 0 |
 | `windsurf-dev-containers` | 32 | 0 | 0 |
 | `windsurf-remote-devin` | 4 | 0 | 0 |
 | `windsurf-remote-openssh` | 30 | 0 | 0 |
 | `windsurf-remote-wsl` | 22 | 0 | 0 |
 
-合计：**254** 个占位符，无法解析 **0**，缺中文 **0**
+合计：**230** 个占位符，无法解析 **0**，缺中文 **0**
 
 ### 抽样对照
 
@@ -49,19 +49,19 @@
 
 ## 3. 语言包 bundle 注册与译文可查性
 
-- 语言包版本 : 1.126.0 (engines.vscode = ^1.126.0)
+- 语言包版本 : 1.131.0 (engines.vscode = ^1.131.0)
 - 已注册 bundle 数 : **95**
 - 含 `windsurf` : ✅
-- vscode bundle 译文总量 : **21,161** 条
-- 本插件补充的 162 条可查 : **162/162** ✅
+- vscode bundle 译文总量 : **27,398** 条
+- 本插件补充的 6928 条可查 : **6928/6928** ✅
 
 ## 4. Agent UI（webapp-host）与 DOM 层
 
-- webapp i18next 载荷 : ✅ `entry-host-editor-mode-menu-DUnUGWLA.js`
+- webapp i18next 载荷 : ✅ `chunk-entry-host-editor-mode-menu-BWLlgqZu.js`
   - 使用 Devin 自带的 `addResourceBundle("en","translation",…)` : ❌
-  - 原始初始化锚点保留 : ✅
+  - 原始初始化锚点保留 : ❌
   - 载荷份数（应为 1） : 1
-- webapp 覆盖词条 : **11,730** 条
-- DOM 词典 : 20,944 条（通用 9,775 + 界面 11,169）
+- webapp 覆盖词条 : **31,961** 条
+- DOM 词典 : 35,804 条（通用 12,385 + 界面 23,419）
 - 注入 `workbench.html` : ✅（运行时 ✅）
 - 注入 `sessions.html` : ✅（运行时 ✅）

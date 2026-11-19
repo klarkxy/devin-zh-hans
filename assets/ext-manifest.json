@@ -937,159 +937,6 @@
 ]
 },
 {
-"key": "windsurf.contributes.commands.52.title",
-"path": [
-"contributes",
-"commands",
-52,
-"title"
-]
-},
-{
-"key": "windsurf.contributes.commands.52.category",
-"path": [
-"contributes",
-"commands",
-52,
-"category"
-]
-},
-{
-"key": "windsurf.contributes.commands.53.title",
-"path": [
-"contributes",
-"commands",
-53,
-"title"
-]
-},
-{
-"key": "windsurf.contributes.commands.53.category",
-"path": [
-"contributes",
-"commands",
-53,
-"category"
-]
-},
-{
-"key": "windsurf.contributes.commands.54.title",
-"path": [
-"contributes",
-"commands",
-54,
-"title"
-]
-},
-{
-"key": "windsurf.contributes.commands.54.category",
-"path": [
-"contributes",
-"commands",
-54,
-"category"
-]
-},
-{
-"key": "windsurf.contributes.commands.55.title",
-"path": [
-"contributes",
-"commands",
-55,
-"title"
-]
-},
-{
-"key": "windsurf.contributes.commands.55.category",
-"path": [
-"contributes",
-"commands",
-55,
-"category"
-]
-},
-{
-"key": "windsurf.contributes.commands.56.title",
-"path": [
-"contributes",
-"commands",
-56,
-"title"
-]
-},
-{
-"key": "windsurf.contributes.commands.56.category",
-"path": [
-"contributes",
-"commands",
-56,
-"category"
-]
-},
-{
-"key": "windsurf.contributes.commands.57.title",
-"path": [
-"contributes",
-"commands",
-57,
-"title"
-]
-},
-{
-"key": "windsurf.contributes.commands.57.category",
-"path": [
-"contributes",
-"commands",
-57,
-"category"
-]
-},
-{
-"key": "windsurf.contributes.commands.58.title",
-"path": [
-"contributes",
-"commands",
-58,
-"title"
-]
-},
-{
-"key": "windsurf.contributes.commands.58.category",
-"path": [
-"contributes",
-"commands",
-58,
-"category"
-]
-},
-{
-"key": "windsurf.contributes.commands.59.title",
-"path": [
-"contributes",
-"commands",
-59,
-"title"
-]
-},
-{
-"key": "windsurf.contributes.commands.59.category",
-"path": [
-"contributes",
-"commands",
-59,
-"category"
-]
-},
-{
-"key": "windsurf.contributes.authentication.0.label",
-"path": [
-"contributes",
-"authentication",
-0,
-"label"
-]
-},
-{
 "key": "windsurf.contributes.configuration.title",
 "path": [
 "contributes",
@@ -1125,16 +972,6 @@
 "properties",
 "windsurf.portalUrl",
 "markdownDescription"
-]
-},
-{
-"key": "windsurf.contributes.configuration.properties.windsurf.enableCursorImportCursor.description",
-"path": [
-"contributes",
-"configuration",
-"properties",
-"windsurf.enableCursorImportCursor",
-"description"
 ]
 },
 {
@@ -1208,46 +1045,6 @@
 ]
 },
 {
-"key": "windsurf.contributes.configuration.properties.windsurf.terminal.shellTimeoutMs.description",
-"path": [
-"contributes",
-"configuration",
-"properties",
-"windsurf.terminal.shellTimeoutMs",
-"description"
-]
-},
-{
-"key": "windsurf.contributes.configuration.properties.windsurf.terminal.cascadeProfile.osx.description",
-"path": [
-"contributes",
-"configuration",
-"properties",
-"windsurf.terminal.cascadeProfile.osx",
-"description"
-]
-},
-{
-"key": "windsurf.contributes.configuration.properties.windsurf.terminal.cascadeProfile.linux.description",
-"path": [
-"contributes",
-"configuration",
-"properties",
-"windsurf.terminal.cascadeProfile.linux",
-"description"
-]
-},
-{
-"key": "windsurf.contributes.configuration.properties.windsurf.terminal.cascadeProfile.windows.description",
-"path": [
-"contributes",
-"configuration",
-"properties",
-"windsurf.terminal.cascadeProfile.windows",
-"description"
-]
-},
-{
 "key": "windsurf.contributes.configuration.properties.windsurf.acp.enabledAgents.description",
 "path": [
 "contributes",
@@ -1298,6 +1095,16 @@
 ]
 },
 {
+"key": "windsurf.contributes.configuration.properties.devin.computerUse.helperPath.description",
+"path": [
+"contributes",
+"configuration",
+"properties",
+"devin.computerUse.helperPath",
+"description"
+]
+},
+{
 "key": "windsurf.contributes.configuration.properties.devin.portalUrl.markdownDescription",
 "path": [
 "contributes",
@@ -1308,13 +1115,13 @@
 ]
 },
 {
-"key": "windsurf.contributes.configuration.properties.devin.enableCursorImportCursor.description",
+"key": "windsurf.contributes.configuration.properties.devin.selfHostedCogMode.markdownDescription",
 "path": [
 "contributes",
 "configuration",
 "properties",
-"devin.enableCursorImportCursor",
-"description"
+"devin.selfHostedCogMode",
+"markdownDescription"
 ]
 },
 {
@@ -1384,6 +1191,16 @@
 "configuration",
 "properties",
 "devin.agentNotifications",
+"description"
+]
+},
+{
+"key": "windsurf.contributes.configuration.properties.devin.stickyErrorToasts.description",
+"path": [
+"contributes",
+"configuration",
+"properties",
+"devin.stickyErrorToasts",
 "description"
 ]
 },
@@ -1464,46 +1281,6 @@
 "configuration",
 "properties",
 "devin.acp.remoteHosts.autoConnect",
-"description"
-]
-},
-{
-"key": "windsurf.contributes.configuration.properties.devin.terminal.shellTimeoutMs.description",
-"path": [
-"contributes",
-"configuration",
-"properties",
-"devin.terminal.shellTimeoutMs",
-"description"
-]
-},
-{
-"key": "windsurf.contributes.configuration.properties.devin.terminal.cascadeProfile.osx.description",
-"path": [
-"contributes",
-"configuration",
-"properties",
-"devin.terminal.cascadeProfile.osx",
-"description"
-]
-},
-{
-"key": "windsurf.contributes.configuration.properties.devin.terminal.cascadeProfile.linux.description",
-"path": [
-"contributes",
-"configuration",
-"properties",
-"devin.terminal.cascadeProfile.linux",
-"description"
-]
-},
-{
-"key": "windsurf.contributes.configuration.properties.devin.terminal.cascadeProfile.windows.description",
-"path": [
-"contributes",
-"configuration",
-"properties",
-"devin.terminal.cascadeProfile.windows",
 "description"
 ]
 },

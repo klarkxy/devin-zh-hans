@@ -188,6 +188,7 @@ node tools/verify_layers.js --real       # 对真实安装执行
 | `zh/g6.json` | 3.11.216 新增缺口的译文（162 条） |
 | `zh/g7.json` | 内置扩展贡献点的译文（254 条字段 / 129 条去重英文） |
 | `zh/webapp/b*.json` `c*.json` | webapp 文案译文，合并进 `tools/dict/webapp-zh.json` |
+| `zh/webapp/w*.json` | webapp 剩余文案的分批译文（w00–w16，按 `webapp-todo.json` 行序切片）；`build_patch.py` 直接拾取，无需预合并 |
 | `webapp.json` / `webapp.md` | webapp i18n 分析结果 |
 | `coverage.md` / `verify-report.md` | 报告产物 |
 | `meta.json` / `build.log` | 构建元信息与日志 |
@@ -258,4 +259,6 @@ python tools/build_vsix.py
 
 若新版的锚点变了（`verify_layers.js` 报「webapp i18next 载荷已注入」失败），
 按 `docs/internals.md` 第 5 节重新定位新的 i18n 初始化语句，更新 `extension.js` 里的
-`HOST_ANCHOR`，并把 `@devin/webapp-host` 的加载路径（`WEBAPP_DIR`）核对一遍。
+`HOST_ANCHORS`（3.11 为 `Mt.isInitialized||Eu()`，3.14 为 `at.isInitialized||Jd()`），
+并把 chunk 前缀核对进 `HOST_CHUNK_PREFIXES`（3.14 起为 `chunk-entry-host-editor-mode-menu`）。
+3.14 的完整实证记录见 `tools/data/webapp-314-anchor.md`。

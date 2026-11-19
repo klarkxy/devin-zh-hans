@@ -33,10 +33,15 @@ if (!APP) { console.error('✗ 未找到 Devin 安装'); process.exit(1); }
 const DIR = path.join(APP, 'resources', 'app', 'out', 'vs', 'workbench', 'devin-webapp-host', 'assets');
 
 let chunk = null;
+// 3.11 chunk 名以 entry-host-… 开头；3.14 变为 chunk-entry-host-…。
+// 守卫形态：3.11 是 Mt.isInitialized||Eu()；3.14 是 at.isInitialized||Jd()（资源根 mu 未变）。
+const GUARDS = ['Mt.isInitialized||Eu()', 'at.isInitialized||Jd()'];
 for (const f of fs.readdirSync(DIR)) {
-  if (!f.startsWith('entry-host-editor-mode-menu') || !f.endsWith('.js')) continue;
+  if (!(f.startsWith('entry-host-editor-mode-menu')
+    || f.startsWith('chunk-entry-host-editor-mode-menu')) || !f.endsWith('.js')) continue;
   const p = path.join(DIR, f);
-  if (fs.readFileSync(p, 'utf8').includes('Mt.isInitialized||Eu()')) { chunk = p; break; }
+  const src = fs.readFileSync(p, 'utf8');
+  if (GUARDS.some((g) => src.includes(g))) { chunk = p; break; }
 }
 if (!chunk) { console.error('✗ 未找到 i18n 入口 chunk'); process.exit(1); }
 

@@ -36,6 +36,8 @@ EXCLUDE_DIRS = {
 }
 EXCLUDE_FILES = {
     ".gitignore", ".gitattributes", ".editorconfig", "CHANGELOG.md",
+    # 会话工作痕迹，不属于插件
+    ".scratch-write-test.txt", ".acl-recovery",
 }
 
 MANIFEST = '''<?xml version="1.0" encoding="utf-8"?>
