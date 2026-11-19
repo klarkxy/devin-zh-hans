@@ -8,12 +8,14 @@
 
 | 环境变量 | 用途 | 默认 |
 |---|---|---|
-| `DEVIN_INSTALL` | Devin 安装根目录（含 `Devin.exe`） | 依次探测 `%LOCALAPPDATA%\Programs\Devin`、`C:\Program Files\Devin` |
+| `DEVIN_INSTALL` | Windows 安装根目录（含 `Devin.exe`）；扩展与 `verify_layers.js` 在 macOS 也接受 `.app` 或其 `Contents` 目录 | Windows 标准安装目录；macOS 为 `/Applications/Devin.app`、`~/Applications/Devin.app` |
 | `DEVIN_HOME` | Devin 用户目录 | `~/.devin` |
 | `DEVIN_PLUGIN_REPO` | 发布目标仓库 | `klarkxy/devin-zh-hans` |
 
 `DEVIN_INSTALL` / `DEVIN_HOME` 同时被 `extension.js` 尊重，这是 `verify_layers.js`
 能在沙盒副本上验证落地逻辑的关键。
+其他历史 Python 分析工具的 `_paths.py` 仍以 Windows 安装树为基础；macOS 安装与验证
+请使用扩展、`verify_layers.js` 和下方不依赖安装的回归测试。
 
 关键目录：
 
@@ -144,6 +146,19 @@ python tools/build_vsix.py --dry-run    # 只列出会打包哪些文件
 
 ## 验证
 
+### `test_installation.js` — 跨平台回归测试（无需安装 Devin）
+
+```sh
+node --test tools/test_installation.js
+node tools/test_dom_runtime.js
+```
+
+使用临时 fixture 和假的 `vscode` 模块运行真实扩展代码：
+覆盖 macOS 大小写敏感路径、当前 `appRoot`、系统/用户安装目录与环境变量覆盖，
+并保留 Windows 三种安装路径探测。两种目录布局均验证四层落地、重复应用、
+同名文件分别备份、新建文件清理及卸载回滚；也验证备份失败与备份文件丢失场景。
+CI 在 Ubuntu、Windows、macOS 上运行，不访问实际应用或用户配置。
+
 ### `verify_layers.js` — 四层落地验证（不启动 Devin）
 
 ```powershell
@@ -153,7 +168,8 @@ node tools/verify_layers.js --apply --keep   # 复用沙盒，验证幂等（第
 node tools/verify_layers.js --real       # 对真实安装执行
 ```
 
-原理：把 `resources/app` 里被本插件碰过的文件 + 官方语言包复制到 `.verify/`，
+原理：把 `resources/app`（macOS 为 `Contents/Resources/app`）里被本插件碰过的文件
++ 官方语言包（如有）复制到 `.verify/`，沙盒保留各平台实际目录结构，
 用 `DEVIN_INSTALL` / `DEVIN_HOME` 指过去，再给 `extension.js` 喂一个假的 `vscode` 模块
 直接调 `activate()` —— 验证的是**插件真实会执行的代码路径**，不是另写一份。
 
@@ -166,6 +182,9 @@ node tools/verify_layers.js --real       # 对真实安装执行
 · 两个窗口 HTML 已注入且运行时脚本存在
 · product.json.checksums 自洽（沙盒里缺的受保护文件会跳过并注明）
 ```
+
+未安装官方中文语言包时，验证扩展自带 `zh-cn` localizations 可用，而不是将其视为失败。
+该脚本不检查 macOS 代码签名；修改 `.app` 资源后签名校验失效属于独立的风险。
 
 ### `verify_integrity.py` — 完整性/占位符/注入状态报告
 

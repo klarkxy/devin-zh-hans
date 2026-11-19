@@ -16,16 +16,29 @@ webapp 命名空间 317 → 427 / key 19,269 → 32,770），全层补齐至接�
   i18next 覆盖表 20,865 → **31,961 条 / 426 命名空间**（3.14 全部 32,770 key 的 97.5%），
   DOM 词典 20,985 → **35,265 条**。92 条纯符号/占位符串按规则跳过。
 - **扩展贡献点 230/230 全中文**（3.14 删减后从 254 → 230 字段，补 3 条新设置项译文）。
-- **术语统一**：issue → 议题（tracker 类；Devin Review 代码缺陷语境保留「问题」）、
-  ticket → 工单、harness → 运行框架、grants（充值语境）→ 赠额、triage → 分诊、
-  On-call → 值班（Devin Oncall 产品名保留）、Agent Readiness/Devin Oncall/Box 等保留英文。
+- **术语统一**：issue → 议题（Jira/Linear/Pylon tracker 类；Devin Review 代码缺陷语境保留
+  「问题」）；ticket/ticketing system → 工单；triage → 分诊；grants 在充值语境 → 赠额；
+  On-call → 值班（Devin Oncall 产品名保留）。全部经过三批独立验收（结构/键对齐/占位符/术语）。
+- **合并 1.2.0 的 macOS 支持与按完整路径备份/回滚**：3.14 适配同时覆盖 Windows 与 macOS，
+  备份清单改按完整路径登记（`files-v2`），五个内置扩展的 `package.json` 不再互相覆盖。
 - 验证：四层沙盒 + 真实安装全绿（语言包 27,398、i18next 命中率 100%、
   运行时查找 17/17、完整性 12/12 自洽）；1.3.0 VSIX 已装本机。
   `build_patch.py` 直接拾取 `w*.json`，无需预合并进 `dict/webapp-zh.json`。
-- **术语统一**：issue → 议题（Jira/Linear/Pylon tracker 类；Devin Review 代码缺陷语境保留
-  「问题」）；ticket/ticketing system → 工单；triage → 分诊；grants 在充值语境 → 赠额；
-  On-call → 值班。全部经过三批独立验收（结构/键对齐/占位符/术语）。
 - 修正 qa 验收发现的转义与引号问题（w03 的 `\n\n` 还原、`「」`→`“”` 等 20 余处）。
+
+## 1.2.0
+
+新增 macOS 支持，并重写备份与回滚机制，让汉化可以安全撤销。（感谢 @Menghuan1918，#2）
+
+- **支持 macOS 安装。** 自动探测 macOS 上的 Devin 安装目录，macOS 用户也能完整汉化。
+- **重写备份与回滚。** 按文件的完整路径记录备份清单，修复以前 5 个内置扩展的 `package.json`
+  只按文件名备份、互相覆盖，导致回滚不完整的问题。
+- **旧备份兼容说明。** 用 1.1.0 及更早版本留下的 `vsix-*` 备份没法自动回滚，会弹提示，
+  需要手动处理或重装 Devin。
+- **CI 覆盖三个平台。** 安装路径与回滚回归测试（7 项）和 DOM 输入框测试在
+  Ubuntu、Windows、macOS 上都会运行。
+- **已知限制。** 如果 Devin 升级后直接「重新应用汉化」，备份不会刷新，这时回滚可能把旧版文件还原上去。
+  建议升级 Devin 后先卸载汉化再重新安装。Windows 图形界面还没人手动测过。
 
 ## 1.1.0
 
