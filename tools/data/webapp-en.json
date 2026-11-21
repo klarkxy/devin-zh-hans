@@ -25186,9 +25186,6 @@
    "fusionLabel": "Fusion",
    "fusionDescription": "The default lead model hands execution to SWE-2.",
    "fusionModelUnavailableDescription": "Available with the default lead model only.",
-   "models.astraCyberPreviewMedium": "Astra Cyber Preview Medium (internal only)",
-   "models.astraCyberPreviewNote": "Internal use only. Astra Cyber Preview is served only to Cognition orgs; do not pick it for a customer scan.",
-   "models.astraCyberPreviewXHigh": "Astra Cyber Preview XHigh (internal only)",
    "models.default": "Mythos 5.2 XHigh (default)",
    "models.mythos51High": "Mythos 5.1 High",
    "models.mythos51Low": "Mythos 5.1 Low",
@@ -25199,9 +25196,6 @@
    "models.mythos52Low": "Mythos 5.2 Low",
    "models.mythos52Max": "Mythos 5.2 Max",
    "models.mythos52Medium": "Mythos 5.2 Medium",
-   "models.swe2High": "SWE-2 High",
-   "models.swe2Low": "SWE-2 Low",
-   "models.swe2Max": "SWE-2 Max",
    "openSession": "Open session",
    "debugSession": "Debug session",
    "repoLabel": "Repositories (optional)",
@@ -33626,10 +33620,10 @@
   }
  },
  "stats": {
-  "total": 32770,
+  "total": 32764,
   "ns": 427,
-  "chunk": "chunk-entry-host-editor-mode-menu-BWLlgqZu.js",
+  "chunk": "chunk-entry-host-editor-mode-menu-2k2EH-7U.js",
   "jsonResources": 33,
-  "jsonKeys": 10833
+  "jsonKeys": 10827
  }
 }

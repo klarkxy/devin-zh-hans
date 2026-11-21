@@ -2,16 +2,16 @@ Devin 安装目录 : C:\Users\27837\AppData\Local\Programs\Devin\resources\app
 中文语言包     : C:\Users\27837\.devin\extensions\ms-ceintl.vscode-language-pack-zh-hans-1.131.0-universal
 NLS 译文条数   : 6925 （来自 23 个词表）
 
-[1] NLS 补充表: 6928 条 / 720 个源文件
+[1] NLS 补充表: 0 条 / 0 个源文件
     ⚠ 未命中译文: 99 ['{0} {1}', '{0} · {1}', '{0}: {1}']
 [2b] 品牌名回正: 1 条
-[2] main.i18n.json: 剔除死条目 692 条, 新增 6928 条, 总 27,398 条, 2.16 MB
+[2] main.i18n.json: 剔除死条目 1 条, 新增 0 条, 总 27,398 条, 2.16 MB
 [3] DOM 通用词典: 12,385 条（由 27,547 条 NLS 原文反查）(0.73 MB)
 
-[4] webapp 词表: 28599 条
-    人工校订词表: 292 条
-    assets/ui-strings-zh.json: 23,419 条 (1.69 MB)
-    assets/webapp-i18n.json: 31,961 条 / 426 个命名空间 (1.85 MB)
+[4] webapp 词表: 28887 条
+    人工校订词表: 564 条
+    assets/ui-strings-zh.json: 23,719 条 (1.72 MB)
+    assets/webapp-i18n.json: 32,233 条 / 426 个命名空间 (1.91 MB)
 
 [5] 扩展贡献点译文: 230 条 / 字段 230
 
@@ -19,12 +19,12 @@ NLS 译文条数   : 6925 （来自 23 个词表）
  "devinDir": "C:\\Users\\27837\\AppData\\Local\\Programs\\Devin\\resources\\app",
  "langpackDir": "C:\\Users\\27837\\.devin\\extensions\\ms-ceintl.vscode-language-pack-zh-hans-1.131.0-universal",
  "langpackVersion": "1.131.0",
- "nlsPairs": 6928,
- "nlsFiles": 720,
+ "nlsPairs": 0,
+ "nlsFiles": 0,
  "nlsTotal": 27398,
  "uiDict": 12385,
- "webappDict": 28599,
- "webappI18n": 31961,
+ "webappDict": 28887,
+ "webappI18n": 32233,
  "extFields": 230,
  "extZh": 230
 }
