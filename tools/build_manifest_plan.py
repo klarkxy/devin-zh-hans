@@ -105,7 +105,9 @@ def main():
         print("✗ 未找到内置扩展目录:", EXT_ROOT)
         return 1
 
-    with open(os.path.join(_DATA, "zh", "g7.json"), "r", encoding="utf-8") as f:
+    # 词表输入目录固定（不受 DEVIN_ZH_DATA 输出重定向影响）
+    zh_in = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "zh")
+    with open(os.path.join(zh_in, "g7.json"), "r", encoding="utf-8") as f:
         zh_by_en = json.load(f)
 
     plan, en_map, zh_map, stats = {}, {}, {}, {}
@@ -143,10 +145,13 @@ def main():
             print("  ⚠ %s 缺译文 %d 条: %s" % (ext, len(miss), miss[:3]))
 
     os.makedirs(_ASSETS, exist_ok=True)
+    # 受限 shell 无法写 assets/ 时，用 DEVIN_ZH_ASSETS 重定向输出目录
+    out_assets = os.environ.get("DEVIN_ZH_ASSETS") or _ASSETS
+    os.makedirs(out_assets, exist_ok=True)
     for name, obj in (("ext-manifest.json", plan),
                       ("ext-manifest.en.json", en_map),
                       ("ext-manifest.zh.json", zh_map)):
-        with open(os.path.join(_ASSETS, name), "w", encoding="utf-8", newline="\n") as f:
+        with open(os.path.join(out_assets, name), "w", encoding="utf-8", newline="\n") as f:
             json.dump(obj, f, ensure_ascii=False, indent=0, sort_keys=True)
 
     print("OK 扩展字段 %d 个, 英文 %d 条, 中文 %d 条"

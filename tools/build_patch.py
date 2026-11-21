@@ -27,12 +27,16 @@ from _paths import (  # noqa: E402
     DEVIN_APP as _APP, LANGPACK as _LP, DATA as _DATA,
     DICT as _DICT, PLUGIN as _PLUGIN,
 )
+# 词表输入目录（不受 DEVIN_ZH_DATA 输出重定向影响）
+ZH_IN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "zh")
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-TRANS = os.path.join(_PLUGIN, "translations")
+# build_patch 直接写插件产物目录；_paths 已支持 DEVIN_ZH_* 重定向（受限 shell 用）。
+from _paths import TRANS as _T, ASSETS as _A  # noqa: E402
+TRANS = _T
 TRANS_EXT = os.path.join(TRANS, "extensions")
-ASSETS = os.path.join(_PLUGIN, "assets")
+ASSETS = _A
 for _d in (TRANS, TRANS_EXT, ASSETS, _DATA):
     os.makedirs(_d, exist_ok=True)
 
@@ -65,7 +69,7 @@ en2zh = {}
 NLS_GLOBS = ("g[0-9]*.json", "n[0-9]*.json")
 nls_tables = []
 for pat in NLS_GLOBS:
-    nls_tables.extend(sorted(glob.glob(os.path.join(_DATA, "zh", pat))))
+    nls_tables.extend(sorted(glob.glob(os.path.join(ZH_IN, pat))))
 for p in nls_tables:
     d = rd(p)
     d.pop("_comment", None)
@@ -132,7 +136,7 @@ for f, kv in supp.items():
 # 品牌名回正：官方 zh-hans 是把 VS Code 翻成中文的，Devin 换了皮之后
 # "Devin Console" 会被译成 "VS Code 控制台"、"Restart Devin" → "重新启动 VS Code"。
 # 这里只改「英文原文里没有 VS Code/Windsurf，译文里却有」的条目 —— 没有歧义。
-brand_path = os.path.join(_DATA, "zh", "g8-brand.json")
+brand_path = os.path.join(ZH_IN, "g8-brand.json")
 brand_fixed = 0
 if os.path.exists(brand_path):
     for f, kv in rd(brand_path).items():
@@ -215,15 +219,15 @@ webapp_zh = {}
 # w*.json：分批翻译产物（todo 切片），未合并进 dict/webapp-zh.json 时也直接拾取。
 # 与 README 的合并命令语义一致（那边会把同批文件折叠进 webapp-zh.json，重复读取无害）。
 for p in (os.path.join(_DICT, "webapp-zh.json"),
-          os.path.join(_DATA, "zh", "webapp-merged.json"),
-          *sorted(glob.glob(os.path.join(_DATA, "zh", "webapp", "w*.json")))):
+          os.path.join(ZH_IN, "webapp-merged.json"),
+          *sorted(glob.glob(os.path.join(ZH_IN, "webapp", "w*.json")))):
     if os.path.exists(p):
         webapp_zh.update(rd(p))
 L("\n[4] webapp 词表:", len(webapp_zh), "条")
 
 extra = {}
-# 顺序即优先级：人工校订 > 旧界面词表 > webapp 译文
-for name in ("ui-common-zh.json", "ui-strings-zh.json"):
+# 顺序即优先级：人工校订 > 旧界面词表 > DOM 增量词表 > webapp 译文
+for name in ("ui-common-zh.json", "ui-strings-zh.json", "dom-30825.json"):
     p = os.path.join(_DICT, name)
     if os.path.exists(p):
         d = rd(p)
@@ -280,7 +284,7 @@ L("    assets/webapp-i18n.json: %s 条 / %d 个命名空间 (%.2f MB)"
      os.path.getsize(os.path.join(ASSETS, 'webapp-i18n.json')) / 1048576))
 
 # ───────────────────────── 5. windsurf 扩展贡献点（兼容旧路线） ─────────────────────────
-g7 = rd(os.path.join(_DATA, "zh", "g7.json")) if os.path.exists(os.path.join(_DATA, "zh", "g7.json")) else {}
+g7 = rd(os.path.join(ZH_IN, "g7.json")) if os.path.exists(os.path.join(ZH_IN, "g7.json")) else {}
 plan = rd(os.path.join(ASSETS, "ext-manifest.json")) if os.path.exists(os.path.join(ASSETS, "ext-manifest.json")) else {}
 enmap = rd(os.path.join(ASSETS, "ext-manifest.en.json")) if os.path.exists(os.path.join(ASSETS, "ext-manifest.en.json")) else {}
 

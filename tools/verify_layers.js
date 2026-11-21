@@ -226,7 +226,10 @@ setTimeout(() => {
     const c = JSON.parse(fs.readFileSync(path.join(lp, 'translations', 'main.i18n.json'), 'utf8')).contents;
     const n = Object.values(c).reduce((a, v) => a + Object.keys(v || {}).length, 0);
     ok(n >= 21000, '语言包译文 ' + n.toLocaleString() + ' 条');
-    const supp = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/data/nls-supplement.json'), 'utf8'));
+    const suppPath = process.env.DEVIN_ZH_DATA
+      ? path.join(process.env.DEVIN_ZH_DATA, 'nls-supplement.json')
+      : path.join(ROOT, 'tools/data/nls-supplement.json');
+    const supp = JSON.parse(fs.readFileSync(suppPath, 'utf8'));
     let hit = 0, tot = 0;
     for (const [f, kv] of Object.entries(supp)) for (const k of Object.keys(kv)) { tot++; if (c[f] && k in c[f]) hit++; }
     ok(hit === tot, '本插件补充译文可查 ' + hit + '/' + tot);
@@ -317,7 +320,9 @@ setTimeout(() => {
     // 载荷的 key 必须真的能在 en 资源树里查到。
     // 载荷是「逐命名空间 Object.assign(mu.x||(mu.x={}),{…})」的逗号序列，
     // 用花括号配平把每个命名空间的 {…} 抠出来，拼回 {ns: {…}} 再比对。
-    const enPath = path.join(ROOT, 'tools', 'data', 'webapp-en.json');
+    const enPath = process.env.DEVIN_ZH_DATA
+      ? path.join(process.env.DEVIN_ZH_DATA, 'webapp-en.json')
+      : path.join(ROOT, 'tools', 'data', 'webapp-en.json');
     if (fs.existsSync(enPath)) {
       const enNs = JSON.parse(fs.readFileSync(enPath, 'utf8')).namespaces;
       const a = s.indexOf('/*devin-zh*/');

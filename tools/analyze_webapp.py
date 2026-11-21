@@ -36,6 +36,8 @@ from _paths import DEVIN_APP as _APP, DATA as _DATA, DICT as _DICT, PLUGIN as _P
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
 EN_JSON = os.path.join(_DATA, "webapp-en.json")
+# 词表输入目录固定（不受 DEVIN_ZH_DATA 输出重定向影响）
+ZH_IN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "zh")
 
 
 def load_dict():
@@ -54,7 +56,7 @@ def load_dict():
                 dd.pop("_comment", None)
                 d.update(dd)
     # w*.json 分批译文：尚未折叠进 dict/webapp-zh.json 时也认成已覆盖。
-    for p in sorted(glob.glob(os.path.join(_DATA, "zh", "webapp", "w*.json"))):
+    for p in sorted(glob.glob(os.path.join(ZH_IN, "webapp", "w*.json"))):
         with open(p, "r", encoding="utf-8") as f:
             d.update(json.load(f))
     return d

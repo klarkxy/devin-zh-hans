@@ -18,7 +18,8 @@ from _paths import (  # noqa: E402
 APP = _APP
 LP = _LP
 WS = os.path.join(APP, "extensions", "windsurf")
-OUTDIR = _DATA
+# 受限 shell 无法写 tools/data 时，用 DEVIN_ZH_DATA 重定向输出目录
+OUTDIR = os.environ.get("DEVIN_ZH_DATA") or _DATA
 
 if not APP:
     raise SystemExit("✗ 未找到 Devin 安装目录（用 DEVIN_INSTALL 指定）")

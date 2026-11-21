@@ -18,3 +18,6 @@ Thumbs.db
 *.bak
 # 验证沙盒（tools/verify_layers.js 生成）
 /.verify/
+# 受限 shell 构建暂存区与 ACL 诊断记录
+/.tmp-data/
+/.acl-recovery/
