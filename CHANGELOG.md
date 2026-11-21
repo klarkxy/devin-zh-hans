@@ -1,5 +1,42 @@
 # Changelog
 
+## 1.3.1
+
+适配 **windsurf 3.14.30825 / 30833**，并修复 issue #3 报告的「更新后汉化失效」。
+
+- **修复「更新后失效」的根因：注入永远晚于 webapp 挂载。** Devin 自动更新会在
+  重启时用干净文件覆盖注入产物，而扩展激活（`onStartupFinished`）比 webapp
+  挂载晚约 6–14 秒 —— 注入只改磁盘，本轮会话的内存里仍是英文，观感即「汉化
+  失效」。现在启动注入后自动重载窗口一次（`healWindowReload`），让页面重新
+  读盘；幂等性保证重载后的第二次激活零写入、不再触发重载。
+- **修复 1.2.x 旧式载荷升级时的语法 bug。** 旧版把载荷插在锚点前用逗号分隔，
+  升级替换时摘掉旧载荷会在块首留下孤立逗号（`function wR(){,…}`），
+  `node --check` 拦下导致更新被放弃。现在插入前先摘掉块首孤立逗号
+  （`verify_layers.js --upgrade` 场景实测复现并修复）。
+- **修复 `devin-zh.status` 的扩展贡献点检查 bug。** 旧逻辑 `!s.includes('%"')`
+  在 JSON 转义下永假/永真不定，五个内置扩展实际全部落地却显示 1/5；
+  现在逐 `%key%` 引用校验 zh-cn 表。
+- **webapp 层新增 537 条**（`tools/data/zh/webapp/w46.json`，3.14.30825 相对
+  30819 的 806 个缺失 key，剔除纯占位符/符号 87 条与保持原文的品牌类）：
+  i18next 覆盖表 31,961 → **32,233 条 / 426 命名空间**（3.14.30825 全部
+  32,764 key 的 98.4%；唯一未覆盖 ns 是 `gateway`，仅 1 个示例占位符）。
+- **DOM 词典新增 272 条**（`tools/dict/dom-30825.json`，30825 新增界面文案）：
+  DOM 词典 35,265 → **35,565 条**。
+- **NLS 层零缺口。** 3.14.30833 的 99 条新 NLS 缺口全部为 `{0} {1}` 类纯
+  占位符模板（35 unique），按既有规则跳过；扩展贡献点计划 230 字段与 30819
+  完全一致，无需更新。
+- **构建工具支持目录重定向**（`DEVIN_ZH_DATA/ASSETS/TRANS/DIST`，经
+  `_paths.py` 统一生效；词表输入目录与产物输出目录分离），受限 shell 下
+  流水线可完整跑通。
+- 术语与既有词表对齐的裁决：`spend limit` 统一「支出上限」、`pull request`
+  统一「拉取请求」、`Wiki —` 前缀与 `Devin Webapp` 产品名保持原文；
+  `automations.booleanTrue/False` → 是/否、头像部件 `Disc/Azure/Visor` →
+  圆盘/天蓝/面罩、`Op...` → 运算符…、`Signal JSON` → 信号 JSON。
+- 验证：`test_installation.js` 7/7（含 globalState 桩）、`test_runtime_merge.js`
+  17/17、`test_dom_runtime.js` 4/4、`verify_layers.js` 三场景（fresh/幂等/
+  upgrade）全绿；30825 chunk 注入后 `node --check` 通过、载荷锚点前就位、
+  语法安全。
+
 ## 1.3.0
 
 适配 **Devin 1.141.2 / windsurf 3.14.30819**（大版本更新：NLS 总量 21,161 → 27,496，

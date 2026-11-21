@@ -33,6 +33,8 @@ EXCLUDE_DIRS = {
     "node_modules", "__pycache__", ".venv",
     # .backup 里是 patch_now.js 留的原始 webapp chunk（2.2 MB），纯本地调试产物
     ".backup",
+    # 受限 shell 下的构建暂存区（重定向产物与调查脚本），绝不进分发包
+    ".tmp-data", ".acl-recovery",
 }
 EXCLUDE_FILES = {
     ".gitignore", ".gitattributes", ".editorconfig", "CHANGELOG.md",

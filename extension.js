@@ -425,7 +425,15 @@ function applyWebappI18n(ctx) {
     }
     if (anchor) {
       const at2 = next.indexOf(anchor);
-      next = next.slice(0, at2) + payload + ',' + next.slice(at2);
+      // 摘掉旧载荷后，载荷原本占据的表达式位置可能只剩一个孤立的分隔逗号
+      // （`function wR(){,at.isInitialized||Jd()}` —— 1.2.x 的旧式插入把载荷放在
+      // 锚点前、用逗号分隔；摘掉载荷后 `wR(){,` 就是块首孤立逗号，语法错误）。
+      // 插入新载荷前先把这个逗号摘掉：块首（`{` 之后）的逗号不是合法表达式分隔符。
+      if (next[at2 - 1] === ',' && next[at2 - 2] === '{') {
+        next = next.slice(0, at2 - 1) + next.slice(at2);
+      }
+      const at3 = next.indexOf(anchor);
+      next = next.slice(0, at3) + payload + ',' + next.slice(at3);
       // 旧载荷两侧原本各有一个表达式分隔逗号；整体摘掉再插入会留下 `,,/*devin-zh*/`。
       // 只收敛注入点处的重复逗号，不改其它代码。
       next = next.replace(/,(?:\s*,)+\s*\/\*devin-zh\*\//g, ',' + HOST_MARK);
@@ -535,7 +543,7 @@ function collectStatus(ctx) {
   if (inst) {
     const app = devinApp(inst);
 
-    // 扩展贡献点
+    // 扩展贡献点：package.json 存在 %key% 引用，且每个引用在 zh-cn 表里有译文
     let extOk = 0, extTotal = 0;
     for (const name of EXT_FAMILY) {
       const dir = path.join(app, 'extensions', name);
@@ -543,9 +551,10 @@ function collectStatus(ctx) {
       if (!fs.existsSync(pkgPath)) continue;
       extTotal++;
       const zh = readJson(path.join(dir, 'package.nls.zh-cn.json'));
-      const pkg = readJson(pkgPath);
-      const s = JSON.stringify(pkg || {});
-      if (zh && s.includes('%"') === false && /%[\w.]{6,}%/.test(s)) extOk++;
+      const s = JSON.stringify(readJson(pkgPath) || {});
+      const refs = s.match(/%([\w.]{6,})%/g) || [];
+      const ok = zh && refs.length > 0 && refs.every((r) => typeof zh[r.slice(1, -1)] === 'string');
+      if (ok) extOk++;
     }
     if (extTotal) out.push('扩展贡献点汉化 : ' + extOk + ' / ' + extTotal);
 
@@ -577,6 +586,29 @@ function collectStatus(ctx) {
   return out;
 }
 
+// Devin 的 webapp 在窗口挂载时就把 i18n chunk 编进内存，而扩展激活
+// （onStartupFinished）晚于挂载 —— 注入只改磁盘，本轮会话仍是英文。
+// 自愈：本轮启动时若发生过任何写入（说明页面加载早于注入），自动重载窗口一次，
+// 让页面重新从磁盘读 chunk。防循环：注入落盘后，重载前后的两次激活里第二次
+// 必然 changed=false（幂等），不会再次触发；globalState 兜底记录「本扩展宿主
+// 会话已重载过」，避免文件系统时序异常下的重复重载。
+function healWindowReload(context, changed) {
+  if (!changed) return;
+  const key = 'devinZhReloadedFor';
+  const sid = 'session-' + process.pid;
+  let reloadedFor = null;
+  try { reloadedFor = context.globalState.get(key); } catch { }
+  if (reloadedFor === sid) return;
+  try { context.globalState.update(key, sid); } catch { }
+  log('本轮启动发生了注入，自动重载窗口使界面生效。');
+  vscode.window.showInformationMessage(
+    'Devin 简体中文已就绪，正在重载窗口使其生效。', '知道了'
+  ).then(() => { }, () => { });
+  setTimeout(() => {
+    vscode.commands.executeCommand('workbench.action.reloadWindow').then(() => { }, () => { });
+  }, 1500);
+}
+
 // ───────────────────────── 激活 ─────────────────────────
 function activate(context) {
   const ctx = { extensionPath: context.extensionPath };
@@ -599,17 +631,17 @@ function activate(context) {
       }
     }
     if (changed) {
-      log('汉化已落地 —— 需重启一次 Devin 才能完全生效。');
-      vscode.window.showInformationMessage(
-        'Devin 简体中文已应用。语言包与界面注入需要重启 Devin 一次才能完全生效。', '知道了'
-      ).then(() => { }, () => { });
+      log('汉化已落地 —— 窗口将自动重载以生效。');
     } else if (!silent) {
       log('汉化已是最新状态，无需改动。');
     }
     return changed;
   };
 
-  run(true);
+  // 启动注入：若发生在窗口挂载之后，自动重载窗口自愈（详见 healWindowReload）。
+  // 手动 run(false)（devin-zh.apply 命令）不自动重载，仍提示用户手动重启。
+  const changedOnStartup = run(true);
+  healWindowReload(context, changedOnStartup);
 
   context.subscriptions.push(
     vscode.commands.registerCommand('devin-zh.status', async () => {

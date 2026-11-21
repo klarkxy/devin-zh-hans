@@ -32,9 +32,18 @@ function loadExtension({ platform, env = {}, appRoot, home = os.homedir(), fileS
       executeCommand: async (...args) => { executions.push(args); },
     },
   };
+  // healWindowReload 需要 globalState；vm 沙盒里没有真 ExtensionContext，
+  // 用一个内存 Map 提供同形接口。
+  const globalState = new Map();
+  const fakeContextState = {
+    get: (key) => globalState.get(key),
+    update: (key, value) => { globalState.set(key, value); return Promise.resolve(); },
+  };
   const context = {
     module: { exports: {} },
     console: { log() {} },
+    setTimeout,
+    clearTimeout,
     process: { platform, env, execPath: process.execPath, pid: process.pid },
     require(name) {
       if (name === 'vscode') return vscode;
@@ -45,7 +54,7 @@ function loadExtension({ platform, env = {}, appRoot, home = os.homedir(), fileS
     },
   };
   vm.runInNewContext(SOURCE + '\nmodule.exports.probe = { findDevinInstall, devinApp, backup };', context);
-  return { ...context.module.exports, commands, messages, executions };
+  return { ...context.module.exports, commands, messages, executions, globalState: fakeContextState };
 }
 
 test('macOS detects appRoot, system/user installs, and explicit bundle/Contents paths', () => {
@@ -155,7 +164,7 @@ for (const mac of [true, false]) {
       env: { DEVIN_INSTALL: inst, DEVIN_HOME: home },
       pathModule: path,
     });
-    const activate = () => ext.activate({ extensionPath: ROOT, subscriptions: [] });
+    const activate = () => ext.activate({ extensionPath: ROOT, subscriptions: [], globalState: ext.globalState });
     activate();
     const patched = { ...snapshot(app), ...snapshot(lp) };
     assert.notDeepEqual(patched, before);
@@ -224,7 +233,7 @@ test('missing backup aborts rollback before any target is restored', async (t) =
     platform: 'darwin', env: { DEVIN_INSTALL: inst, DEVIN_HOME: home },
     pathModule: path,
   });
-  ext.activate({ extensionPath: ROOT, subscriptions: [] });
+  ext.activate({ extensionPath: ROOT, subscriptions: [], globalState: ext.globalState });
   const patched = snapshot(app);
   const index = path.join(home, 'devin-zh-backups/files-v2/manifest.json');
   const entries = JSON.parse(fs.readFileSync(index));
@@ -244,7 +253,7 @@ test('legacy basename-only backups are not used for automatic rollback', async (
     platform: 'darwin', env: { DEVIN_HOME: root },
     pathModule: path, fileSystem: { ...fs, existsSync: (p) => p.startsWith(root) && fs.existsSync(p) },
   });
-  ext.activate({ extensionPath: ROOT, subscriptions: [] });
+  ext.activate({ extensionPath: ROOT, subscriptions: [], globalState: ext.globalState });
   await ext.commands['devin-zh.uninstall']();
   assert.equal(ext.executions.length, 0);
   assert.ok(ext.messages.some((message) => message.includes('vsix-*')));

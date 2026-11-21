@@ -15,12 +15,13 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))     # <repo>/tools
 ROOT = os.path.dirname(HERE)                          # <repo>
 
+# 受限 shell 写不了仓库部分目录时，用 DEVIN_ZH_ASSETS/DEVIN_ZH_TRANS/DEVIN_ZH_DATA 重定向产物位置
 PLUGIN = ROOT                                         # 插件根 = 仓库根
-ASSETS = os.path.join(ROOT, "assets")                 # 运行时资源（词典等）
-TRANS = os.path.join(ROOT, "translations")            # 语言包
-DIST = os.path.join(ROOT, "dist")                     # 插件自带的运行时产物（需提交）
+ASSETS = os.environ.get("DEVIN_ZH_ASSETS") or os.path.join(ROOT, "assets")                 # 运行时资源（词典等）
+TRANS = os.environ.get("DEVIN_ZH_TRANS") or os.path.join(ROOT, "translations")            # 语言包
+DIST = os.environ.get("DEVIN_ZH_DIST") or os.path.join(ROOT, "dist")   # 插件自带的运行时产物（需提交）
 BUILD = os.path.join(ROOT, "build")                   # VSIX 打包输出（被 git 忽略）
-DATA = os.path.join(HERE, "data")                     # 中间数据
+DATA = os.environ.get("DEVIN_ZH_DATA") or os.path.join(HERE, "data")                     # 中间数据
 DICT = os.path.join(HERE, "dict")                     # 人工维护的词表
 OUT = BUILD                                           # 兼容旧脚本里的 OUT
 

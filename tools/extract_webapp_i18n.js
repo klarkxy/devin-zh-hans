@@ -273,8 +273,10 @@ for (const probe of ['settingsUi.highContrast', 'common.highContrast', 'settings
   if (v) console.log('  抽查 %-32s %s', probe, '"' + v + '"');
 }
 
-fs.mkdirSync(path.join(ROOT, 'tools', 'data'), { recursive: true });
-fs.writeFileSync(path.join(ROOT, 'tools', 'data', 'webapp-en.json'),
+// 落盘位置可用环境变量改写（受限 shell 无法写 tools/data 时指到别处）
+const OUT_DIR = process.env.DEVIN_ZH_DATA || path.join(ROOT, 'tools', 'data');
+fs.mkdirSync(OUT_DIR, { recursive: true });
+fs.writeFileSync(path.join(OUT_DIR, 'webapp-en.json'),
   JSON.stringify({
     namespaces: nsMap,
     stats: {
@@ -282,4 +284,4 @@ fs.writeFileSync(path.join(ROOT, 'tools', 'data', 'webapp-en.json'),
       jsonResources: jsonResources.size, jsonKeys,
     },
   }, null, 1), 'utf8');
-console.log('✓ tools/data/webapp-en.json');
+console.log('✓ ' + path.join(OUT_DIR, 'webapp-en.json'));
