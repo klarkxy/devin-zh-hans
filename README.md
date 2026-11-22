@@ -21,6 +21,10 @@ Remove-Item Env:\ELECTRON_RUN_AS_NODE -ErrorAction SilentlyContinue
 Start-Process "$env:LOCALAPPDATA\Programs\Devin\Devin.exe"
 ```
 
+安装在非默认目录时，请将上述命令中的路径替换为实际路径。扩展会从当前 Devin 的
+`appRoot` 自动识别安装目录；若仍提示未找到，请将用户环境变量 `DEVIN_INSTALL`
+设置为包含 `Devin.exe` 的目录（例如 `D:\Apps\Devin`），再重启 Devin。
+
 ### macOS
 
 已在 macOS（Darwin 27.0.0）、Devin Desktop **3.11.228 / VS Code 1.126.0**

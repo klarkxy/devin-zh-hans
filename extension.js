@@ -52,8 +52,8 @@ function devinHome() {
 }
 
 function findDevinInstall() {
+  const app = vscode.env && vscode.env.appRoot;
   if (process.platform === 'darwin') {
-    const app = vscode.env && vscode.env.appRoot;
     const cands = [
       process.env.DEVIN_INSTALL,
       app && path.resolve(app, '..', '..'),
@@ -68,6 +68,7 @@ function findDevinInstall() {
   }
   const cands = [
     process.env.DEVIN_INSTALL,
+    app && path.resolve(app, '..', '..'),
     path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Devin'),
     'C:\\Program Files\\Devin',
   ];
@@ -552,7 +553,7 @@ function collectStatus(ctx) {
       extTotal++;
       const zh = readJson(path.join(dir, 'package.nls.zh-cn.json'));
       const s = JSON.stringify(readJson(pkgPath) || {});
-      const refs = s.match(/%([\w.]{6,})%/g) || [];
+      const refs = s.match(/%([\w.-]{6,})%/g) || [];
       const ok = zh && refs.length > 0 && refs.every((r) => typeof zh[r.slice(1, -1)] === 'string');
       if (ok) extOk++;
     }
@@ -614,8 +615,16 @@ function activate(context) {
   const ctx = { extensionPath: context.extensionPath };
   log('扩展已激活, 路径 =', context.extensionPath);
 
+  const MISSING_INSTALL_MSG =
+    '未找到 Devin 安装目录，扩展贡献点、Agent UI 和 DOM 汉化已跳过。若安装在非默认路径，请将环境变量 DEVIN_INSTALL 设置为 Devin 安装目录后重启。';
+
   const run = (silent) => {
     let changed = false;
+    const installMissing = !findDevinInstall();
+    // 启动时提示一次；手动重新应用由命令给出单一结果，避免「已跳过」后又说「已是最新」。
+    if (installMissing && silent) {
+      vscode.window.showWarningMessage(MISSING_INSTALL_MSG).then(() => { }, () => { });
+    }
     const steps = [
       ['语言包', applyLanguagePack],
       ['扩展贡献点', applyExtensionManifests],
@@ -630,18 +639,20 @@ function activate(context) {
         log(name + ' 层失败:', e.message);
       }
     }
-    if (changed) {
+    if (changed && !installMissing) {
       log('汉化已落地 —— 窗口将自动重载以生效。');
-    } else if (!silent) {
+    } else if (changed && installMissing) {
+      log('语言包已更新；未找到 Devin 安装目录，其余层已跳过。');
+    } else if (!silent && !installMissing) {
       log('汉化已是最新状态，无需改动。');
     }
-    return changed;
+    return { changed, installMissing };
   };
 
   // 启动注入：若发生在窗口挂载之后，自动重载窗口自愈（详见 healWindowReload）。
   // 手动 run(false)（devin-zh.apply 命令）不自动重载，仍提示用户手动重启。
-  const changedOnStartup = run(true);
-  healWindowReload(context, changedOnStartup);
+  const startup = run(true);
+  healWindowReload(context, startup.changed);
 
   context.subscriptions.push(
     vscode.commands.registerCommand('devin-zh.status', async () => {
@@ -650,7 +661,12 @@ function activate(context) {
       await vscode.window.showInformationMessage('Devin 中文状态：' + lines.join(' | '), { modal: true }, '确定');
     }),
     vscode.commands.registerCommand('devin-zh.apply', async () => {
-      const changed = run(false);
+      const { changed, installMissing } = run(false);
+      if (installMissing) {
+        await vscode.window.showWarningMessage(
+          changed ? ('语言包已更新。' + MISSING_INSTALL_MSG) : MISSING_INSTALL_MSG);
+        return;
+      }
       await vscode.window.showInformationMessage(
         changed ? '已重新应用汉化，请重启 Devin。' : '汉化已是最新，无需改动。');
     }),
