@@ -268,7 +268,7 @@
   "Pylon-connected users only": "仅限已连接 Pylon 的用户",
   "Re-run session termination": "重新执行会话终止",
   "Returning to Devin Desktop": "正在返回 Devin Desktop",
-  "Run all rollout backfills?": "运行所有推广回填？",
+  "Run all rollout backfills?": "运行所有灰度回填？",
   "Search by name or email...": "按姓名或电子邮件搜索...",
   "Search for a user or group": "搜索用户或组",
   "Search for an organization": "搜索组织",

@@ -1,0 +1,74 @@
+{
+  "actionModelPicker": {
+    "effortPro": "Pro"
+  },
+  "adminGovernance": {
+    "rollout.confirmTitleAll": "运行所有灰度回填？",
+    "rollout.description": "按顺序将此账号的授权灰度回填作为后台任务运行，并使用该账号的 Unleash 开关。",
+    "rollout.loadFailed": "加载灰度回填失败。"
+  },
+  "analyticsRevamp": {
+    "cloud.keys.l": "L",
+    "cloud.keys.m": "M",
+    "cloud.keys.open_pr": "未关闭 PR",
+    "cloud.keys.s": "S",
+    "cloud.keys.teams": "Teams"
+  },
+  "auth": {
+    "accountPicker.tierMax": "Max",
+    "accountPicker.tierTeams": "Teams"
+  },
+  "automations": {
+    "slackThreadModeNotify": "在话题中通知",
+    "summaryTag_teams": "Teams"
+  },
+  "billing": {
+    "planNames.max": "Max",
+    "planNames.team": "Team",
+    "planNames.teams": "Teams"
+  },
+  "settings": {
+    "rollout": "灰度发布",
+    "rolloutDescription": "监控并控制声明式环境配置在企业范围内的灰度发布",
+    "rolloutStatus": "灰度发布状态",
+    "rolloutStatusDescription": "监控声明式环境配置在企业范围内的灰度发布情况",
+    "securityProfileTeamsSettings": "Teams",
+    "slackThreadModeDescription": "控制 Devin 是在现有话题中回复还是创建新话题",
+    "slackThreadModeMentionOnlyDescription": "Devin 会在提及它的话题中回复，且只读取之后提及它的回复。",
+    "threads": "话题"
+  },
+  "sidebar": {
+    "origins.teams": "Teams",
+    "propertyTeams": "Teams"
+  },
+  "boards": {
+    "labels.pointsBurnUp": "点数累计图",
+    "sweepNow": "立即巡检",
+    "sweepSent": "已请求巡检",
+    "sweeping": "巡检中……"
+  },
+  "microsoftTeams": {
+    "threadModeInThread": "话题内",
+    "threadModePlaceholder": "话题模式"
+  },
+  "oncall": {
+    "threadSessionModeDescription": "Devin 在话题中的智能体模式。",
+    "threadSessionModeLabel": "话题会话模式"
+  },
+  "sessionAnalysis": {
+    "sizeL": "L",
+    "sizeM": "M",
+    "sizeS": "S"
+  },
+  "transcript": {
+    "threadTitle": "话题"
+  },
+  "worklog": {
+    "slackDetailThread": "话题"
+  },
+  "workspace": {
+    "browserGoToLive": "转到实时视图",
+    "computerStats.tooltipCapture": "捕获",
+    "computerStats.tooltipDecode": "解码"
+  }
+}

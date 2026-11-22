@@ -61,7 +61,7 @@
   "Import VS Code settings": "导入 VS Code 设置",
   "Import rules from Cursor": "从 Cursor 导入规则",
   "Let Devin see commands and output from your integrated terminal.": "允许 Devin 查看集成终端中的命令和输出。",
-  "Let Devin see which files you edit and create in your workspace, and let a Devin Cloud session read unsaved edits when it reads a file on this machine.": "允许 Devin 查看你在工作区中编辑和创建的文件，并允许 Devin 云会话在读取此计算机上的文件时读取尚未保存的编辑内容。",
+  "Let Devin see which files you edit and create in your workspace, and let a Devin Cloud session read unsaved edits when it reads a file on this machine.": "允许 Devin 查看你在工作区中编辑和创建的文件，并允许 Devin Cloud 会话在读取此计算机上的文件时读取尚未保存的编辑内容。",
   "Log Out": "退出登录",
   "Log in": "登录",
   "Map of ACP agent IDs to default session config preferences. Each key is an agent ID and the value is an object mapping config option IDs to their preferred default values, applied automatically when a new session is created.": "ACP 智能体 ID 到默认会话配置首选项的映射。每个键是一个智能体 ID，值是一个将配置选项 ID 映射到其首选默认值的对象，在创建新会话时自动应用。",

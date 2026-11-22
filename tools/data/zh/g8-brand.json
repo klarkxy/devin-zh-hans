@@ -42,7 +42,7 @@
  },
  "vs/workbench/contrib/mcp/common/mcpConfiguration": {
   "mcp.discovery.source.windsurf": "Devin",
-  "mcp.discovery.source.windsurf.config": "Devin 配置(`~/.codeium/windsurf/mcp_config.json`)"
+  "mcp.discovery.source.windsurf.config": "Devin 配置(`~/.codeium/{0}/mcp_config.json`)"
  },
  "vs/workbench/contrib/remoteTunnel/electron-browser/remoteTunnel.contribution": {
   "progress.turnOn.final": "现在，可以通过安全隧道 [{0}](command:{4}) 随时随地访问此计算机。要通过其他计算机进行连接，请使用生成的 [{1}]({2})链接，或者在桌面或 Web 中使用 [{6}]({7})扩展。可以通过“Devin 帐户”菜单 [配置](command:{3}) 或 [关闭](command:{5})此访问权限。"

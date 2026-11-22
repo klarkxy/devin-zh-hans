@@ -133,21 +133,22 @@ for f, kv in supp.items():
             tgt[k] = v
             added += 1
 
-# 品牌名回正：官方 zh-hans 是把 VS Code 翻成中文的，Devin 换了皮之后
-# "Devin Console" 会被译成 "VS Code 控制台"、"Restart Devin" → "重新启动 VS Code"。
-# 这里只改「英文原文里没有 VS Code/Windsurf，译文里却有」的条目 —— 没有歧义。
-brand_path = os.path.join(ZH_IN, "g8-brand.json")
-brand_fixed = 0
-if os.path.exists(brand_path):
-    for f, kv in rd(brand_path).items():
+# 强制回正：官方 zh-hans 面向 VS Code，且部分按键、助记符存在上下文误译。
+# 这些精确覆盖会在补充译文之后应用，因此也能修正官方包已经包含的 key。
+context_fixed = 0
+for fix_name in ("g8-brand.json", "context-overrides.json"):
+    fix_path = os.path.join(ZH_IN, fix_name)
+    if not os.path.exists(fix_path):
+        continue
+    for f, kv in rd(fix_path).items():
         tgt = contents.get(f)
         if not isinstance(tgt, dict):
             continue
         for k, v in kv.items():
             if tgt.get(k) != v:
                 tgt[k] = v
-                brand_fixed += 1
-L("[2b] 品牌名回正: %d 条" % brand_fixed)
+                context_fixed += 1
+L("[2b] 品牌与上下文回正: %d 条" % context_fixed)
 
 out_main = os.path.join(TRANS, "main.i18n.json")
 wr(out_main, main)
@@ -241,6 +242,9 @@ for en, zh in webapp_zh.items():
         continue
     if "{{" in en or "}}" in en:      # 插值模板，DOM 层匹配不到整串
         continue
+    if re.fullmatch(r"[A-Za-z]", en):
+        # 星期、尺寸等单字母只有 i18next 上下文才能区分；全局替换会误改菜单访问键。
+        continue
     if len(en) > 200:
         continue
     dom_extra.setdefault(en, zh)      # 人工校订优先，不覆盖
@@ -275,6 +279,22 @@ if os.path.exists(en_path):
                 tgt[k] = z
         if tgt:
             wa_ns[name] = tgt
+    # 产品名与普通名词共用英文原文时，只能按 i18n key 区分。
+    # 与英文相同的值表示撤销全局译文，保留该产品/套餐名原文。
+    key_override_path = os.path.join(ZH_IN, "webapp-key-overrides.json")
+    if os.path.exists(key_override_path):
+        key_override_count = 0
+        for name, overrides in rd(key_override_path).items():
+            for k, z in overrides.items():
+                if name not in _en or k not in _en[name]:
+                    raise KeyError("未知的 webapp key 覆盖: %s.%s" % (name, k))
+                if z == _en[name][k]:
+                    if name in wa_ns:
+                        wa_ns[name].pop(k, None)
+                else:
+                    wa_ns.setdefault(name, {})[k] = z
+                key_override_count += 1
+        L("    Webapp 精确键覆盖:", key_override_count, "条")
 else:
     L("    ⚠ 缺少 data/webapp-en.json，先跑 tools/analyze_webapp.py")
 

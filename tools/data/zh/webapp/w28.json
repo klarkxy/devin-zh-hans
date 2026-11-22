@@ -185,7 +185,7 @@
   "In-depth analysis that balances cost and performance.": "在成本与性能之间取得平衡的深度分析。",
   "Incident dashboard": "事件仪表板",
   "Incident events can't be verified until the signing secret is saved.": "在保存签名密钥之前，无法验证事件。",
-  "Incident learnings and system facts from Devin Oncall.": "来自 Devin 值班的事件经验与系统事实。",
+  "Incident learnings and system facts from Devin Oncall.": "来自 Devin Oncall 的事件经验与系统事实。",
   "Incident routing is managed by enterprise settings": "事件路由由企业设置管理",
   "Incident source": "事件来源",
   "Incident source and multi-organization routing": "事件来源与多组织路由",

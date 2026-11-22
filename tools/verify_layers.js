@@ -222,8 +222,10 @@ setTimeout(() => {
       .map((d) => path.join(lpRoot, d))
       .find((p) => fs.existsSync(path.join(p, 'translations', 'main.i18n.json')))
     : null;
+  const languagePackPath = lp ? path.join(lp, 'translations', 'main.i18n.json')
+    : path.join(ROOT, 'translations/main.i18n.json');
+  const c = JSON.parse(fs.readFileSync(languagePackPath, 'utf8')).contents;
   if (lp) {
-    const c = JSON.parse(fs.readFileSync(path.join(lp, 'translations', 'main.i18n.json'), 'utf8')).contents;
     const n = Object.values(c).reduce((a, v) => a + Object.keys(v || {}).length, 0);
     ok(n >= 21000, '语言包译文 ' + n.toLocaleString() + ' 条');
     const suppPath = process.env.DEVIN_ZH_DATA
@@ -241,6 +243,26 @@ setTimeout(() => {
     ok(pkg.contributes.localizations.some((loc) => loc.languageId === 'zh-cn'),
       '使用扩展自带中文语言包');
   }
+  const contextFixes = JSON.parse(fs.readFileSync(
+    path.join(ROOT, 'tools/data/zh/context-overrides.json'), 'utf8'));
+  let contextHit = 0, contextTotal = 0;
+  for (const [f, kv] of Object.entries(contextFixes)) {
+    for (const [k, expected] of Object.entries(kv)) {
+      contextTotal++;
+      if (c[f] && c[f][k] === expected) contextHit++;
+    }
+  }
+  ok(contextHit === contextTotal, '精确上下文修正 ' + contextHit + '/' + contextTotal);
+  const badMnemonics = [];
+  for (const [f, kv] of Object.entries(c)) {
+    for (const [k, value] of Object.entries(kv || {})) {
+      if (typeof value === 'string' && /&&[\u3400-\u4DBF\u4E00-\u9FFF]/.test(value)) {
+        badMnemonics.push(f + '::' + k);
+      }
+    }
+  }
+  ok(badMnemonics.length === 0, '语言包没有 && 后接汉字的助记符'
+    + (badMnemonics.length ? '：' + badMnemonics.slice(0, 3).join(', ') : ''));
 
   // 2) 扩展贡献点
   let nExt = 0, nZh = 0;
@@ -374,6 +396,52 @@ setTimeout(() => {
         ok(ratio >= 0.95,
           '载荷 key 命中率 ' + (ratio * 100).toFixed(1) + '%（' + found + '/' + checked + '）'
           + (unknownSamples.length ? ' 未命中如: ' + unknownSamples.join(', ') : ''));
+
+        const override = (key) => {
+          for (const values of Object.values(payload)) {
+            if (Object.prototype.hasOwnProperty.call(values, key)) return values[key];
+          }
+          return undefined;
+        };
+        const contextProbes = [
+          ['keyAlt', 'Alt', true],
+          ['spaceKey', 'Space', true],
+          ['sendShortcutModeEnter', '回车', false],
+          ['keyboardShortcuts.commands.digestOpenPR', '打开拉取请求', false],
+          ['keyboardShortcuts.commands.membersPageUp', '上移五名成员', false],
+          ['avatarColorRose', '玫红', false],
+        ];
+        for (const [key, expected, allowMissing] of contextProbes) {
+          const actual = override(key);
+          ok(actual === expected || (allowMissing && actual === undefined),
+            '上下文译文 ' + key + ' → ' + (actual === undefined ? '(保留英文)' : actual));
+        }
+        const productKeyOverrides = JSON.parse(fs.readFileSync(
+          path.join(ROOT, 'tools/data/zh/webapp-key-overrides.json'), 'utf8'));
+        let productHit = 0, productTotal = 0;
+        for (const [ns, entries] of Object.entries(productKeyOverrides)) {
+          for (const [key, expected] of Object.entries(entries)) {
+            productTotal++;
+            const actual = payload[ns] && payload[ns][key];
+            if (actual === expected || (expected === enNs[ns][key] && actual === undefined)) productHit++;
+          }
+        }
+        ok(productHit === productTotal, '多义词精确键覆盖 ' + productHit + '/' + productTotal);
+        const protectedNames = ['Devin Local', 'Devin Cloud', 'Devin Review', 'Devin Oncall',
+          'Devin for Cloud', 'DeepWiki', 'Microsoft Teams', 'Fusion Fast'];
+        const badProductNames = [];
+        for (const [ns, entries] of Object.entries(enNs)) {
+          for (const [key, en] of Object.entries(entries)) {
+            const actual = payload[ns] && payload[ns][key];
+            if (typeof en !== 'string' || typeof actual !== 'string') continue;
+            const missing = protectedNames.filter((name) => en.includes(name) && !actual.includes(name));
+            if ((en === 'Fusion' && actual !== 'Fusion') || missing.length) {
+              badProductNames.push(ns + '.' + key);
+            }
+          }
+        }
+        ok(badProductNames.length === 0, 'Web 译文保留产品专名'
+          + (badProductNames.length ? '：' + badProductNames.slice(0, 3).join(', ') : ''));
 
         // 3.14 起 composerTips.sessionNav 改名 agentLocation（值也换了）
         const probes = ['composerTips.agentLocation', 'composerTips.sidebar', 'sidebar.automations',

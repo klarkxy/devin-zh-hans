@@ -1,0 +1,171 @@
+{
+ "vs/platform/agentHost/electron-browser/sshRemoteAgentHostServiceImpl": {
+  "sshHostKeyConnect": "连接(&&C)"
+ },
+ "vs/sessions/browser/parts/menubar.contribution": {
+  "mSelection": "选择(&&S)"
+ },
+ "vs/sessions/contrib/agentFeedback/browser/agentFeedbackEditorInputContribution": {
+  "enter": "回车"
+ },
+ "vs/sessions/contrib/chat/browser/externalSessionBanner": {
+  "externalSessionBanner.confirm.save": "仍然保存(&&S)"
+ },
+ "vs/sessions/contrib/providers/remoteAgentHost/browser/remoteAgentHostActions": {
+  "tunnelDeleteButton": "删除(&&D)"
+ },
+ "vs/workbench/browser/parts/auxiliarybar/auxiliaryBarActions": {
+  "miCloseSecondarySideBar": "智能体边栏(&&S)"
+ },
+ "vs/workbench/contrib/browserView/common/browserView": {
+  "browserView.openShareableCopy.confirm": "打开并共享(&&O)"
+ },
+ "vs/workbench/contrib/issue/browser/issueTroubleshoot": {
+  "msg": "排查问题(&&T)"
+ },
+ "vs/workbench/contrib/markers/browser/markersAccessibilityHelp": {
+  "problems.keyTab": "- Tab: 移动到严重性和范围切换按钮。"
+ },
+ "vs/workbench/contrib/onboarding/browser/onboardingTryoutUrlHandler": {
+  "onboarding.tryout.external.confirm.open": "打开示例(&&O)"
+ },
+ "vs/workbench/contrib/preferences/browser/preferences.contribution": {
+  "miOpenSettings": "编辑器设置(&&S)"
+ },
+ "vs/workbench/contrib/terminal/browser/terminalEditorInput": {
+  "confirmDirtyTerminal.button": "终止(&&T)"
+ },
+ "vs/workbench/contrib/windsurfAcpService/browser/acpSessionsQuickAccess": {
+  "acpSessionOpenPullRequest": "打开拉取请求"
+ },
+ "vs/workbench/services/extensionManagement/common/extensionManagementService": {
+  "trust and install": "信任发布者并安装(&&I)",
+  "trust publishers and install": "信任发布者并安装(&&I)"
+ },
+ "vs/workbench/services/userDataSync/browser/userDataSyncWorkbenchService": {
+  "replace local single": "接受远程 {0}(&&R)",
+  "replace remote single": "接受本地 {0}(&&L)"
+ },
+ "vs/base/browser/ui/tree/abstractTree": {
+  "type to search": "键入以搜索",
+  "type to filter": "键入以筛选"
+ },
+ "vs/platform/agentHost/common/agentHostSchema": {
+  "agentHost.sessionConfig.autoApprove.default": "手动审批",
+  "agentHost.sessionConfig.mode.autopilotDescription": "在权限范围内自主工作"
+ },
+ "vs/platform/agentHost/common/changesetUri": {
+  "sessionChangeset.label": "会话更改"
+ },
+ "vs/platform/agentHost/node/agentHostCommitOperationProvider": {
+  "agentHost.changeset.commit": "提交更改"
+ },
+ "vs/platform/agentHost/node/copilot/copilotSystemNotification": {
+  "agentHost.copilot.systemNotification.agentCompleted": "后台智能体 {0} 已完成"
+ },
+ "vs/workbench/contrib/agentsVoice/browser/agentsVoiceWidget": {
+  "agentsVoice.clickMicToTalk": "点击语音模式开始说话"
+ },
+ "vs/workbench/contrib/agentsVoice/browser/components/headerComponent": {
+  "agentsVoice.clickMicToTalk": "点击语音模式开始说话"
+ },
+ "vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationListWidget": {
+  "groupAriaLabel": "{0}，{1} 项"
+ },
+ "vs/workbench/contrib/chat/browser/aiCustomization/aiCustomizationManagementEditor": {
+  "homeButtonLabel": "发现"
+ },
+ "vs/workbench/contrib/chat/browser/aiCustomization/mcpListWidget": {
+  "mcpGroupAriaLabel": "{0}，{1} 项"
+ },
+ "vs/workbench/contrib/chat/browser/aiCustomization/pluginListWidget": {
+  "pluginGroupAriaLabel": "{0}，{1} 项"
+ },
+ "vs/workbench/contrib/chat/browser/chat.shared.contribution": {
+  "chat.agent.networkFilter": "启用后，智能体工具（fetch 工具、集成浏览器）的网络访问将根据 {0} 和 {1} 进行限制。启用 {2} 时，域名筛选也会应用于这些工具。\n\n更改可能需要重启 VS Code 后才能完全生效。",
+  "chat.hookFilesLocations.description": "指定钩子配置文件的路径，这些文件定义了在智能体工作流关键节点执行的自定义 shell 命令。[了解详细信息]({0})。\n\n相对路径从工作区的根文件夹解析。支持 Copilot 钩子（`*.json`）和 Claude Code 钩子（`settings.json`、`settings.local.json`）。\n\n此设置仅供本地智能体运行框架使用。",
+  "chat.mode.config.locations.description": "指定自定义聊天模式文件的位置（`*{0}`）。[了解详细信息]({1})。\n\n相对路径从工作区的根文件夹解析。\n\n此设置仅供本地智能体运行框架使用。",
+  "chat.reusablePrompts.config.locations.description": "指定可在聊天会话中运行的可重用提示文件（`*{0}`）的位置。[了解详细信息]({1})。\n\n相对路径从工作区的根文件夹解析。\n\n此设置仅供本地智能体运行框架使用。",
+  "chat.agents.config.locations.description": "指定自定义智能体文件的位置（`*{0}`）。[了解详细信息]({1})。\n\n相对路径从工作区的根文件夹解析。\n\n此处配置的位置仅供本地智能体运行框架使用。其他在 VS Code 中运行的运行框架除了使用其内置位置外，还会从此处配置的所有其他位置接收智能体。若要将智能体用于独立智能体运行框架（例如 Copilot CLI），请在“智能体自定义”编辑器中查看 {2}，将它们迁移到受支持的位置。",
+  "chat.agentSkillsLocations.description": "指定可在聊天会话中使用的智能体技能（`{0}`）的位置。[了解详细信息]({1})。\n\n每个路径都应包含带有 SKILL.md 文件的技能子文件夹（例如，如果你有 `my-skills/skillA/SKILL.md`，则添加 `my-skills`）。相对路径从工作区的根文件夹解析。\n\n此处配置的位置仅供本地智能体运行框架使用。其他在 VS Code 中运行的运行框架除了使用其内置位置外，还会从此处配置的所有其他位置接收技能。若要将技能用于独立智能体运行框架（例如 Copilot CLI），请在“智能体自定义”编辑器中查看 {2}，将它们迁移到受支持的位置。",
+  "chat.instructions.config.locations.description": "指定可在聊天会话中附加的指令文件（`*{0}`）的位置。[了解详细信息]({1})。\n\n相对路径从工作区的根文件夹解析。\n\n此处配置的位置仅供本地智能体运行框架使用。其他在 VS Code 中运行的运行框架除了使用其内置位置外，还会从此处配置的所有其他位置接收指令。若要将指令用于独立智能体运行框架（例如 Copilot CLI），请在“智能体自定义”编辑器中查看 {2}，将它们迁移到受支持的位置。",
+  "chat.progressBorder.enabled": "智能体工作或思考时，在聊天输入框周围显示动画渐变边框。启用减少动态效果时无效。",
+  "chat.mode.config.locations.deprecated": "此设置和本地智能体运行框架将在未来版本中移除。聊天模式现称为自定义智能体，位于 `.github/agents`。请在“智能体自定义”编辑器中查看 {0}，将它们迁移到受支持的位置。",
+  "chat.plugins.extraMarketplaces": "企业管理的其他插件市场，与 {0} 合并。条目的 `autoUpdate` 值会覆盖来自该市场的插件的 {1} 设置。"
+ },
+ "vs/workbench/contrib/chat/browser/chatSetup/chatSetupController": {
+  "invalidEnterpriseInstance": "请输入 GHE.com 实例名称或 HTTPS URL。"
+ },
+ "vs/workbench/contrib/chat/browser/widgetHosts/viewPane/chatViewPane": {
+  "voiceMode.pttHint": "按住 {0} 说话"
+ },
+ "vs/workbench/contrib/chat/common/chatPermissionWarnings": {
+  "permissions.autoApprove.warning.title": "是否启用{0}？",
+  "permissions.autoApprove.warning.detail": "{0} 将自动批准所有工具调用，不再要求确认，包括文件编辑、终端命令和外部工具调用。\n\n若要将此权限级别设为新会话的初始权限，请更改[{1}](command:workbench.action.openSettings?%5B%22{1}%22%5D)设置。"
+ },
+ "vs/workbench/contrib/devinCloudFiles/browser/devinCloudFilesStatusView": {
+  "devinCloudFilesStatusView": "Devin Cloud 文件"
+ },
+ "vs/workbench/contrib/devinCloudSaveNotices/electron-browser/devinCloudSaveNotices.contribution": {
+  "devinCloudSaveNotices.disable": "Devin Cloud：禁用保存通知",
+  "devinCloudSaveNotices.disabled": "Devin 不再收到你在此 Devin Cloud 会话中保存文件的通知。",
+  "devinCloudSaveNotices.enable": "Devin Cloud：启用保存通知",
+  "devinCloudSaveNotices.enabled": "Devin 现在会收到你在此 Devin Cloud 会话中保存文件的通知，并由 Devin 审阅、提交并推送这些文件。",
+  "devinCloudSaveNotices.status.name": "Devin Cloud 保存通知",
+  "devinCloudSaveNotices.toggle": "Devin Cloud：切换保存通知",
+  "devinCloudSaveNoticesAvailable": "此窗口是否为可以向 Devin 告知已保存文件的 Devin Cloud 会话窗口。"
+ },
+ "vs/workbench/contrib/files/browser/editors/textFileSaveErrorHandler": {
+  "saveElevatedSudo": "以 Sudo 重试..."
+ },
+ "vs/workbench/contrib/issue/browser/baseIssueReporterService": {
+  "extension": "扩展"
+ },
+ "vs/workbench/contrib/mcp/browser/mcpCommands": {
+  "mcp.agentHost.disable": "禁用服务器",
+  "mcp.agentHost.enable": "启用服务器"
+ },
+ "vs/workbench/contrib/processExplorer/electron-browser/processExplorer.contribution": {
+  "processExplorer": "进程资源管理器"
+ },
+ "vs/workbench/contrib/terminalContrib/chatAgentTools/browser/tools/task/createAndRunTaskTool": {
+  "createTask": "将在“{1}”中创建任务“{0}”，并运行以下命令："
+ },
+ "vs/workbench/contrib/terminalContrib/chatAgentTools/common/terminalChatAgentToolsConfiguration": {
+  "agentSandbox.allowUnsandboxedCommands": "控制当沙盒命令失败或沙盒限制会阻止命令时，智能体模式终端命令是否可在用户确认后于沙盒外运行。"
+ },
+ "vs/workbench/contrib/windsurfCascadeView/browser/readOnlyDiffContentProvider": {
+  "devinCloudResource": "Devin Cloud 资源"
+ },
+ "vs/platform/extensionManagement/common/allowedExtensionsService": {
+  "extension prerelease not allowed": "此扩展的预发布版本不在允许列表中。",
+  "prerelease versions from this publisher not allowed": "来自此发布者的预发布版本不在允许列表中。",
+  "publisher not allowed": "来自此发布者的扩展不在允许列表中。",
+  "specific extension not allowed": "它不在允许列表中。",
+  "specific version of extension not allowed": "此扩展的版本 {0} 不在允许列表中。"
+ },
+ "vs/platform/agentHost/node/agentService": {
+  "agentHost.forkedTitlePrefix": "已分叉："
+ },
+ "vs/sessions/common/contextkeys": {
+  "sessionSupportsFork": "会话视图中的会话是否支持从某个轮次分叉聊天，形成新的同级聊天。"
+ },
+ "vs/sessions/contrib/chat/browser/sessionsChatAccessibilityHelp": {
+  "sessionsChat.forkToSide": "按住 Alt 单击（macOS 上为 Option 单击）检查点处的“分叉对话”按钮，可在其源对话旁边打开该分叉。常规激活保持原有行为。使用键盘时，先激活“分叉对话”，从“会话”列表重新打开源会话，再从分叉的上下文菜单中选择“在侧边打开”。"
+ },
+ "vs/workbench/contrib/chat/browser/actions/chatActions": {
+  "insertForkConversationSlashCommand": "插入分叉命令"
+ },
+ "vs/workbench/contrib/chat/browser/actions/chatForkActions": {
+  "chat.forkConversation.label": "分叉对话",
+  "chat.forkConversation.tooltip": "从此处分叉对话",
+  "chat.forked.title": "已分叉：{0}",
+  "chat.forked.titlePrefix": "已分叉："
+ },
+ "vs/workbench/contrib/chat/browser/chatTipCatalog": {
+  "tip.forkConversation": "使用 [{0}](command:{1} \"Run /fork\"){2} 分叉会话。在不丢失原始上下文的情况下探索不同方法。"
+ },
+ "vs/workbench/contrib/workspace/browser/workspaceTrustEditor": {
+  "trustOrg": "你将信任 {1} 上“{0}”下的所有仓库及其分叉。"
+ }
+}
