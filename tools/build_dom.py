@@ -49,12 +49,13 @@ RUNTIME = r"""/* devin-zh-dom.js — Devin 界面简体中文（DOM 层）
   var SKIP_TAGS = {
     SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, TEXTAREA: 1, INPUT: 1, SELECT: 1, OPTION: 1,
     CODE: 1, PRE: 1, KBD: 1, SAMP: 1, VAR: 1, SVG: 1, CANVAS: 1, IFRAME: 1, OBJECT: 1,
-    MATH: 1, VIDEO: 1, AUDIO: 1
+    MATH: 1, VIDEO: 1, AUDIO: 1, MNEMONIC: 1
   };
 
   /* 跳过选择器：代码编辑器、终端、Agent 消息正文、输入框、显式声明不翻译的区域 */
   var SKIP_SEL = [
     '.monaco-editor', '.monaco-diff-editor', '.monaco-list-row .label-name',
+    '.monaco-keybinding',
     '.xterm', '.xterm-helper-textarea', '.cm-editor', '.cm-content', '.ace_editor',
     '.view-lines', '.view-line', '.minimap',
     '[data-streamdown]', '.prose', '.markdown-body',
@@ -319,6 +320,10 @@ RULES = [
     [r"^Tip:\s*(.+)$", "提示：$1"],
 ]
 
+# 这些原文同时表示普通名词和产品/套餐名，DOM 无法区分上下文。
+# 普通界面仍由 webapp 全局词表翻译，产品键由 webapp-key-overrides.json 精确保留。
+DOM_CONTEXT_KEYS = {"Team", "Teams", "Max", "Pro"}
+
 
 def load():
     d = {}
@@ -336,7 +341,8 @@ def load():
 def build():
     d = load()
     # 去掉空值与「译文等于原文」的条目
-    d = {k: v for k, v in d.items() if k and v and k.strip() != v.strip()}
+    d = {k: v for k, v in d.items()
+         if k and v and k.strip() != v.strip() and k not in DOM_CONTEXT_KEYS}
     js = RUNTIME.replace("__DICT__", json.dumps(d, ensure_ascii=False, separators=(",", ":")))
     js = js.replace("__RULES__", json.dumps(
         [[r, s] for r, s in RULES], ensure_ascii=False, separators=(",", ":")))

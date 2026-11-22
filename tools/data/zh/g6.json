@@ -15,12 +15,12 @@
  "Show the window's own folders in the Agent Command Center instead of the active session's folders. Applies to windows that have not yet switched; reopen the folder or workspace to restore a window that already has.": "在智能体命令中心显示窗口自己的文件夹，而不是当前会话的文件夹。仅对尚未切换过的窗口生效；若窗口已切换，请重新打开文件夹或工作区以恢复。",
  "Let the Devin Agent Window throttle timers and rendering while it is in the background. Off by default so sessions keep updating at full rate behind other windows. Takes effect immediately.": "允许 Devin 智能体窗口在后台时限制定时器与渲染频率。默认关闭，以便会话在其他窗口后面仍以全速更新。立即生效。",
 
- "Devin Cloud: Disable Save Notices": "Devin 云端：禁用保存通知",
- "Devin is no longer told about the files you save in this Devin Cloud session.": "Devin 不再收到你在此 Devin 云端会话中保存文件的通知。",
- "Devin Cloud: Enable Save Notices": "Devin 云端：启用保存通知",
- "Devin is now told about the files you save in this Devin Cloud session. Devin reviews, commits and pushes them.": "Devin 现在会收到你在此 Devin 云端会话中保存文件的通知，并由 Devin 审阅、提交并推送这些文件。",
+ "Devin Cloud: Disable Save Notices": "Devin Cloud：禁用保存通知",
+ "Devin is no longer told about the files you save in this Devin Cloud session.": "Devin 不再收到你在此 Devin Cloud会话中保存文件的通知。",
+ "Devin Cloud: Enable Save Notices": "Devin Cloud：启用保存通知",
+ "Devin is now told about the files you save in this Devin Cloud session. Devin reviews, commits and pushes them.": "Devin 现在会收到你在此 Devin Cloud会话中保存文件的通知，并由 Devin 审阅、提交并推送这些文件。",
  "Save notice failed": "保存通知失败",
- "Devin Cloud Save Notices": "Devin 云端保存通知",
+ "Devin Cloud Save Notices": "Devin Cloud保存通知",
  "Devin told about saves": "已告知 Devin 保存情况",
  "Telling Devin about saves": "正在告知 Devin 保存情况",
  "Save notices off": "保存通知已关闭",
@@ -28,7 +28,7 @@
  "Save notice queued": "保存通知已排队",
  "Devin not told yet": "尚未告知 Devin",
  "Save notices unavailable": "保存通知不可用",
- "Devin Cloud: Toggle Save Notices": "Devin 云端：切换保存通知",
+ "Devin Cloud: Toggle Save Notices": "Devin Cloud：切换保存通知",
  "Devin could not be told about your saves. Your files are saved on the session machine; tell Devin about them yourself.": "无法把你的保存告知 Devin。文件已保存在会话机器上，请自行告知 Devin。",
  "Devin knows about your saved files and commits and pushes them when it is safe.": "Devin 已知道你保存的文件，并会在安全时提交并推送。",
  "Sending the list of saved files to Devin.": "正在把已保存文件列表发送给 Devin。",
@@ -38,7 +38,7 @@
  "Devin could not be reached. The notice is retried; you can also tell Devin about your saves yourself.": "无法连接 Devin。通知会自动重试；你也可以自行告知 Devin 你的保存。",
  "Save notices are not available for this session.": "此会话不支持保存通知。",
  "Save notices are not available for your account.": "你的账号不支持保存通知。",
- "Whether this window is a Devin Cloud session window that can tell Devin about saved files.": "此窗口是否为可以向 Devin 告知已保存文件的 Devin 云端会话窗口。",
+ "Whether this window is a Devin Cloud session window that can tell Devin about saved files.": "此窗口是否为可以向 Devin 告知已保存文件的 Devin Cloud会话窗口。",
 
  "Controls whether the Share command and the Share context menu entries are available.": "控制是否提供“共享”命令与“共享”右键菜单项。",
  "When enabled, clicking a link in Devin to a website outside your trusted domains asks for confirmation before it opens in the browser.": "启用后，在 Devin 中点击指向受信任域之外的网站链接时，会先请求确认再在浏览器中打开。",
@@ -64,7 +64,7 @@
  "Wake up and reconnect": "唤醒并重新连接",
 
  "Open IDE Window for This Session": "为此会话打开 IDE 窗口",
- "No Devin cloud session is in focus, so there is no session machine to open the IDE on.": "当前没有处于焦点的 Devin 云端会话，因此没有可打开 IDE 的会话机器。",
+ "No Devin cloud session is in focus, so there is no session machine to open the IDE on.": "当前没有处于焦点的 Devin Cloud会话，因此没有可打开 IDE 的会话机器。",
  "Could not send text to the agent tab.": "无法向智能体标签页发送文本。",
 
  "Workspace": "工作区",
@@ -72,7 +72,7 @@
  "Could not open the workspace. Reopen this tab to try again.": "无法打开工作区。请重新打开此标签页再试。",
  "Customize": "自定义",
 
- "Add Codemap to Devin Local": "将代码图添加到 Devin 本地",
+ "Add Codemap to Devin Local": "将代码图添加到 Devin Local",
  "Code Scan Findings": "代码扫描结果",
  "Open Code Scan Findings": "打开代码扫描结果",
  "Findings": "结果",

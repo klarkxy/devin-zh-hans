@@ -390,7 +390,7 @@
   "Code indexing and wiki generation": "代码索引与 Wiki 生成",
   "Devin builds and deploys your app": "Devin 构建并部署你的应用",
   "Dollars by product this half-year": "本半年按产品统计的金额",
-  "Failed to load rollout backfills.": "加载发布回填失败。",
+  "Failed to load rollout backfills.": "加载灰度回填失败。",
   "Failed to load workspace history.": "加载工作区历史失败。",
   "Failed to transfer the repository": "转移仓库失败",
   "File not found in this repository": "此仓库中未找到该文件",

@@ -151,6 +151,8 @@ python tools/build_vsix.py --dry-run    # 只列出会打包哪些文件
 ```sh
 node --test tools/test_installation.js
 node tools/test_dom_runtime.js
+node --test tools/test_i18n_overrides.js
+python tools/test_webapp_overrides.py
 ```
 
 使用临时 fixture 和假的 `vscode` 模块运行真实扩展代码：

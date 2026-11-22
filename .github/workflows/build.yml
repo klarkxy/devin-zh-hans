@@ -26,6 +26,8 @@ jobs:
         run: node --test tools/test_installation.js
       - name: DOM 输入框回归测试
         run: node tools/test_dom_runtime.js
+      - name: Web 精确覆盖产物回归
+        run: node --test tools/test_i18n_overrides.js
 
   build:
     needs: test
@@ -83,6 +85,9 @@ jobs:
           print("OK", "%s.%s" % (pkg.get("publisher"), pkg.get("name")), pkg.get("version"))
           sys.exit(1 if bad else 0)
           PY
+
+      - name: webapp 键覆盖健壮性（3.11 缺键不得中断）
+        run: python tools/test_webapp_overrides.py
 
       - name: 校验 tag 与 package.json 版本一致
         if: startsWith(github.ref, 'refs/tags/v')

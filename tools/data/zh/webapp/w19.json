@@ -268,7 +268,7 @@
   "Also removed from this org": "同时从此组织移除",
   "Also tests hosts on the networks the machine is directly attached to. Anything further, and any network the scan is not sure is yours, is tested only after you approve it.": "还会测试机器直连网络上的主机。更远的主机，以及扫描无法确定属于你的网络，只有在你批准后才会测试。",
   "Also {{threatModelFile}} and the threat model section of {{securityPolicyFile}}": "以及 {{threatModelFile}} 和 {{securityPolicyFile}} 的威胁模型部分",
-  "Alt": "替代文本",
+  "Alt": "Alt",
   "Alternatively, use email code": "或者改用邮件验证码",
   "Always allow": "始终允许",
   "Always allow in this project": "在此项目中始终允许",

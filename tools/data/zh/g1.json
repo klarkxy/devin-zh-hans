@@ -40,7 +40,7 @@
  "Devin": "Devin",
  "Devin CLI successfully installed. Run `{0}` in a new terminal to use it.": "Devin CLI 已成功安装。在新终端中运行 `{0}` 即可使用。",
  "Devin CLI successfully installed. Run `{0}` in a new terminal to use it. You must quit and re-open (not just reload) Devin to use it in the integrated terminal.": "Devin CLI 已成功安装。在新终端中运行 `{0}` 即可使用。要在集成终端中使用它，必须退出并重新打开（而不仅仅是重新加载）Devin。",
- "Devin Cloud Files": "Devin 云文件",
+ "Devin Cloud Files": "Devin Cloud 文件",
  "Devin Desktop": "Devin Desktop",
  "Devin MCP Plugin Page": "Devin MCP 插件页面",
  "Devin MCP Registry": "Devin MCP 注册表",

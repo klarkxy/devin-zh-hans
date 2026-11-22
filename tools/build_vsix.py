@@ -30,6 +30,7 @@ sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 # 仓库级目录 / 文件：不属于插件，不进 VSIX
 EXCLUDE_DIRS = {
     ".git", ".github", ".vscode", "tools", "docs", "build", ".verify",
+    ".learnings",
     "node_modules", "__pycache__", ".venv",
     # .backup 里是 patch_now.js 留的原始 webapp chunk（2.2 MB），纯本地调试产物
     ".backup",

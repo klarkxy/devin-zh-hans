@@ -200,7 +200,7 @@
 "windsurf.contributes.configuration.properties.devin.acp.remoteHosts.enabled.description": "通过 SSH 连接到远程计算机上的智能体。",
 "windsurf.contributes.configuration.properties.devin.acp.runSaveActions.description": "Devin 编辑文件时运行保存时格式化和保存时代码操作（例如 gofmt）。禁用后，智能体的编辑将直接保存，不会运行保存操作。",
 "windsurf.contributes.configuration.properties.devin.acp.shareTerminalContext.description": "允许 Devin 查看集成终端中的命令和输出。",
-"windsurf.contributes.configuration.properties.devin.acp.shareUserEdits.description": "允许 Devin 查看你在工作区中编辑和创建的文件，并允许 Devin 云会话在读取此计算机上的文件时读取尚未保存的编辑内容。",
+"windsurf.contributes.configuration.properties.devin.acp.shareUserEdits.description": "允许 Devin 查看你在工作区中编辑和创建的文件，并允许 Devin Cloud 会话在读取此计算机上的文件时读取尚未保存的编辑内容。",
 "windsurf.contributes.configuration.properties.devin.agentNotifications.description": "当智能体会话在后台完成或需要你输入时，显示系统原生通知。",
 "windsurf.contributes.configuration.properties.devin.allowCascadeAccessGitignoreFiles.description": "允许 Cascade、Tab 和 Supercomplete 查看并编辑 .gitignore 中的文件。",
 "windsurf.contributes.configuration.properties.devin.autoContinue.description": "控制 Cascade 在达到调用上限时是否自动继续。0 或负值表示开启自动继续（Cascade 会无限继续）。正值（例如 40）表示关闭自动继续（Cascade 在该调用次数后停止并提示你继续）。",

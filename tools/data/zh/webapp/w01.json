@@ -152,7 +152,7 @@
   "Available ACUs": "可用 ACU",
   "Available MCP servers": "可用的 MCP 服务器",
   "Available in Devin": "在 Devin 中可用",
-  "Available once Devin Oncall is ready": "Devin 值班就绪后可用",
+  "Available once Devin Oncall is ready": "Devin Oncall 就绪后可用",
   "Available only to {{name}}'s sessions": "仅 {{name}} 的会话可用",
   "Available only when the automation runs as you": "仅在自动化以你的身份运行时可用",
   "Available to all sessions across all organizations in the enterprise": "企业内所有组织的所有会话均可使用",
