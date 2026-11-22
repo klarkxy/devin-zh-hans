@@ -117,6 +117,17 @@ test('missing Windows installation warns how to configure DEVIN_INSTALL', () => 
   assert.ok(ext.messages[0].includes('DEVIN_INSTALL'));
 });
 
+test('re-apply with missing install reports skip, not up to date', async () => {
+  const ext = loadExtension({ platform: 'win32', fileSystem: { existsSync: () => false } });
+  ext.activate({ extensionPath: ROOT, subscriptions: [], globalState: ext.globalState });
+  ext.messages.length = 0;
+  await ext.commands['devin-zh.apply']();
+  assert.ok(ext.messages.some((message) => message.includes('DEVIN_INSTALL')));
+  assert.ok(!ext.messages.some((message) => message.includes('汉化已是最新')));
+  assert.ok(!ext.messages.some((message) => message.includes('已重新应用汉化')));
+  assert.equal(ext.messages.length, 1);
+});
+
 function write(p, value) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
   fs.writeFileSync(p, typeof value === 'string' ? value : JSON.stringify(value));
@@ -175,17 +186,41 @@ function makeFixture(t, mac) {
   return { inst, app, home, lp, chunk, pages };
 }
 
-for (const mac of [true, false]) {
-  test(`${mac ? 'macOS' : 'Windows layout'}: four layers, idempotency, and complete rollback`, async (t) => {
+const fourLayerLoads = [
+  {
+    name: 'via DEVIN_INSTALL',
+    options(fixture, mac) {
+      return {
+        // On non-Windows hosts use native paths for real filesystem fixtures.
+        platform: mac ? 'darwin' : process.platform === 'win32' ? 'win32' : 'linux',
+        env: { DEVIN_INSTALL: fixture.inst, DEVIN_HOME: fixture.home },
+        pathModule: path,
+      };
+    },
+  },
+  {
+    // Discovers the install from vscode.env.appRoot only. Would miss layers 2–4
+    // if findDevinInstall ignored a non-default path (the original issue).
+    name: 'via appRoot (non-default path)',
+    options(fixture, mac) {
+      return {
+        platform: mac ? 'darwin' : process.platform === 'win32' ? 'win32' : 'linux',
+        env: { DEVIN_HOME: fixture.home },
+        appRoot: fixture.app,
+        pathModule: path,
+      };
+    },
+  },
+];
+
+for (const layout of fourLayerLoads) {
+  for (const mac of [true, false]) {
+    test(`${mac ? 'macOS' : 'Windows layout'} ${layout.name}: four layers, idempotency, and complete rollback`, async (t) => {
     const fixture = makeFixture(t, mac);
     const { inst, app, home, lp, chunk, pages } = fixture;
     const before = { ...snapshot(app), ...snapshot(lp) };
-    const ext = loadExtension({
-      // On non-Windows hosts use native paths for real filesystem fixtures.
-      platform: mac ? 'darwin' : process.platform === 'win32' ? 'win32' : 'linux',
-      env: { DEVIN_INSTALL: inst, DEVIN_HOME: home },
-      pathModule: path,
-    });
+    const ext = loadExtension(layout.options(fixture, mac));
+    assert.equal(ext.probe.findDevinInstall(), inst);
     const activate = () => ext.activate({ extensionPath: ROOT, subscriptions: [], globalState: ext.globalState });
     activate();
     const patched = { ...snapshot(app), ...snapshot(lp) };
@@ -224,12 +259,16 @@ for (const mac of [true, false]) {
     activate();
     assert.deepEqual({ ...snapshot(app), ...snapshot(lp) }, patched);
     assert.deepEqual(snapshot(path.dirname(index)), backups);
+    const beforeApply = ext.messages.length;
+    await ext.commands['devin-zh.apply']();
+    assert.ok(ext.messages.slice(beforeApply).some((message) => message.includes('汉化已是最新')));
     await ext.commands['devin-zh.uninstall']();
     assert.deepEqual({ ...snapshot(app), ...snapshot(lp) }, before);
     assert.equal(JSON.stringify(ext.executions), JSON.stringify([
       ['workbench.extensions.uninstallExtension', 'devin-zh.devin-zh-hans'],
     ]));
   });
+  }
 }
 
 test('backup failure throws before modifying the original target', (t) => {
