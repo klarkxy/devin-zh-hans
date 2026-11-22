@@ -95,6 +95,28 @@ test('Windows retains explicit, LOCALAPPDATA, and Program Files installation dis
   }
 });
 
+test('Windows detects a non-default installation from appRoot', () => {
+  const expected = 'D:\\Apps\\Devin';
+  const appRoot = path.win32.join(expected, 'resources', 'app');
+  const fileSystem = {
+    existsSync: (p) => [expected, 'E:\\Explicit\\Devin'].includes(path.win32.dirname(p))
+      && path.win32.basename(p) === 'Devin.exe',
+  };
+  const ext = loadExtension({ platform: 'win32', appRoot, fileSystem });
+  assert.equal(ext.probe.findDevinInstall(), expected);
+  const explicit = loadExtension({
+    platform: 'win32', appRoot, fileSystem, env: { DEVIN_INSTALL: 'E:\\Explicit\\Devin' },
+  });
+  assert.equal(explicit.probe.findDevinInstall(), 'E:\\Explicit\\Devin');
+});
+
+test('missing Windows installation warns how to configure DEVIN_INSTALL', () => {
+  const ext = loadExtension({ platform: 'win32', fileSystem: { existsSync: () => false } });
+  ext.activate({ extensionPath: ROOT, subscriptions: [], globalState: ext.globalState });
+  assert.equal(ext.messages.length, 1);
+  assert.ok(ext.messages[0].includes('DEVIN_INSTALL'));
+});
+
 function write(p, value) {
   fs.mkdirSync(path.dirname(p), { recursive: true });
   fs.writeFileSync(p, typeof value === 'string' ? value : JSON.stringify(value));
@@ -190,6 +212,8 @@ for (const mac of [true, false]) {
         assert.equal(typeof zh[field.key], 'string');
       }
     }
+    await ext.commands['devin-zh.status']();
+    assert.ok(ext.messages.some((message) => message.includes('扩展贡献点汉化 : 5 / 5')));
     const index = path.join(home, 'devin-zh-backups/files-v2/manifest.json');
     const entries = JSON.parse(fs.readFileSync(index));
     const packages = Object.keys(entries).filter((p) => p.endsWith(path.sep + 'package.json'));
