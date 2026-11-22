@@ -27,6 +27,7 @@ from _paths import (  # noqa: E402
     DEVIN_APP as _APP, LANGPACK as _LP, DATA as _DATA,
     DICT as _DICT, PLUGIN as _PLUGIN,
 )
+from _webapp_key_overrides import apply_webapp_key_overrides  # noqa: E402
 # 词表输入目录（不受 DEVIN_ZH_DATA 输出重定向影响）
 ZH_IN = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "zh")
 
@@ -281,20 +282,15 @@ if os.path.exists(en_path):
             wa_ns[name] = tgt
     # 产品名与普通名词共用英文原文时，只能按 i18n key 区分。
     # 与英文相同的值表示撤销全局译文，保留该产品/套餐名原文。
+    # 当前版本没有的键（例如 3.11 没有 3.14 新增的套餐名）直接跳过，
+    # 避免在语言包已经写入之后因 KeyError 中断、留下半更新树。
     key_override_path = os.path.join(ZH_IN, "webapp-key-overrides.json")
     if os.path.exists(key_override_path):
-        key_override_count = 0
-        for name, overrides in rd(key_override_path).items():
-            for k, z in overrides.items():
-                if name not in _en or k not in _en[name]:
-                    raise KeyError("未知的 webapp key 覆盖: %s.%s" % (name, k))
-                if z == _en[name][k]:
-                    if name in wa_ns:
-                        wa_ns[name].pop(k, None)
-                else:
-                    wa_ns.setdefault(name, {})[k] = z
-                key_override_count += 1
+        key_override_count, skipped_overrides = apply_webapp_key_overrides(
+            _en, wa_ns, rd(key_override_path))
         L("    Webapp 精确键覆盖:", key_override_count, "条")
+        if skipped_overrides:
+            L("    跳过本版本不存在的键:", len(skipped_overrides), skipped_overrides[:5])
 else:
     L("    ⚠ 缺少 data/webapp-en.json，先跑 tools/analyze_webapp.py")
 

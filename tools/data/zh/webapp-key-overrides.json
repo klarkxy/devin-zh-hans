@@ -16,16 +16,34 @@
   },
   "auth": {
     "accountPicker.tierMax": "Max",
+    "accountPicker.tierPro": "Pro",
     "accountPicker.tierTeams": "Teams"
   },
   "automations": {
+    "dayInitialFriday": "五",
+    "dayInitialMonday": "一",
+    "dayInitialSaturday": "六",
+    "dayInitialSunday": "日",
+    "dayInitialThursday": "四",
+    "dayInitialTuesday": "二",
+    "dayInitialWednesday": "三",
     "slackThreadModeNotify": "在话题中通知",
     "summaryTag_teams": "Teams"
   },
   "billing": {
     "planNames.max": "Max",
+    "planNames.pro": "Pro",
     "planNames.team": "Team",
     "planNames.teams": "Teams"
+  },
+  "ui": {
+    "crontabEditor.dayFri": "五",
+    "crontabEditor.dayMon": "一",
+    "crontabEditor.daySat": "六",
+    "crontabEditor.daySun": "日",
+    "crontabEditor.dayThu": "四",
+    "crontabEditor.dayTue": "二",
+    "crontabEditor.dayWed": "三"
   },
   "settings": {
     "rollout": "灰度发布",
